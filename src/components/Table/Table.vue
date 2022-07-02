@@ -536,11 +536,11 @@ div.no-data {
   height: calc(100% - v-bind('scrollbarHeight + "px"') - var(--fuzzy-ui-table-header-height));
 }
 
-div.fuzzy-ui-table > div.table-scroll::after {
+div.fuzzy-ui-table > .table-scroll::after {
   height: calc(v-bind('filteredRows.length') * var(--fuzzy-ui-table-row-height));
 }
 
-/* div.fuzzy-ui-table > div.table-scroll > table > tbody {
+/* div.fuzzy-ui-table > .table-scroll > table > tbody {
   transform: translateY(v-bind('(-partialRow) + "px"'));
 } */
 </style>
@@ -558,7 +558,7 @@ div.fuzzy-ui-table > div.table-scroll::after {
   --fuzzy-ui-table-header-font-weight: bold;
   --fuzzy-ui-table-header-height: 40px;
   --fuzzy-ui-table-header-padding: 10px;
-  --fuzzy-ui-table-header-border-bottom: 1px solid #e5e5e5;
+  --fuzzy-ui-table-header-border: 1px solid #e5e5e5;
   --fuzzy-ui-table-cell-padding: 10px;
   --fuzzy-ui-table-cell-font-size: 14px;
   --fuzzy-ui-table-cell-font-weight: normal;
@@ -572,7 +572,7 @@ div.fuzzy-ui-table > div.table-scroll::after {
   );
 }
 
-.fuzzy-ui-table > div > table > thead > tr > th > :is(div, label) {
+.fuzzy-ui-table > .table-scroll > table > thead > tr > th > :is(div, label) {
   height: var(--fuzzy-ui-table-header-height);
   max-height: var(--fuzzy-ui-table-header-height);
   padding: var(--fuzzy-ui-table-header-padding);
@@ -581,17 +581,17 @@ div.fuzzy-ui-table > div.table-scroll::after {
   box-sizing: border-box;
 }
 
-.fuzzy-ui-table > div > table > thead > tr > th {
+.fuzzy-ui-table > .table-scroll > table > thead > tr > th {
   background: var(--fuzzy-ui-table-header-bg);
   color: var(--fuzzy-ui-table-header-color);
   font-size: var(--fuzzy-ui-table-header-font-size);
   font-weight: var(--fuzzy-ui-table-header-font-weight);
   padding: 0;
-  border-bottom: var(--fuzzy-ui-table-header-border-bottom);
+  border: var(--fuzzy-ui-table-header-border);
   box-sizing: border-box;
 }
 
-.fuzzy-ui-table > div > table > tbody > tr > td {
+.fuzzy-ui-table > .table-scroll > table > tbody > tr > td {
   padding: 1px;
   /* height: var(--fuzzy-ui-table-cell-height); */
   box-sizing: border-box;
@@ -606,7 +606,7 @@ div.fuzzy-ui-table > div.table-scroll::after {
   min-width: var(--fuzzy-ui-table-cell-min-width);
 }
 
-.fuzzy-ui-table > div > table > tbody > tr > td > :is(input, label) {
+.fuzzy-ui-table > .table-scroll > table > tbody > tr > td > :is(input, label) {
   all: unset;
   padding: var(--fuzzy-ui-table-cell-padding);
   box-sizing: border-box;
@@ -617,21 +617,21 @@ div.fuzzy-ui-table > div.table-scroll::after {
   line-height: 1;
 }
 
-.fuzzy-ui-table > div > table tr > :is(td, th) > label > input {
+.fuzzy-ui-table > .table-scroll > table tr > :is(td, th) > label > input {
   margin: auto;
 }
 
-.fuzzy-ui-table > div > table > tbody > tr > td > input:focus {
+.fuzzy-ui-table > .table-scroll > table > tbody > tr > td > input:focus {
   outline: auto 1px Highlight;
 }
 
-.fuzzy-ui-table > div > table > thead > tr > th > div > div {
+.fuzzy-ui-table > .table-scroll > table > thead > tr > th > div > div {
   display: flex;
   width: 100%;
   align-items: center;
 }
 
-.fuzzy-ui-table > div > table > thead > tr > th > div > div > span {
+.fuzzy-ui-table > .table-scroll > table > thead > tr > th > div > div > span {
   transform: scaleY(0.7);
   margin-left: auto;
   user-select: none;
@@ -639,15 +639,15 @@ div.fuzzy-ui-table > div.table-scroll::after {
   flex-shrink: 0;
 }
 
-.fuzzy-ui-table > div > table > tbody > tr {
+.fuzzy-ui-table > .table-scroll > table > tbody > tr {
   background-color: var(--fuzzy-ui-table-row-bg);
 }
 
-.fuzzy-ui-table > div > table > tbody > tr.checked {
+.fuzzy-ui-table > .table-scroll > table > tbody > tr.checked {
   background-color: var(--fuzzy-ui-table-row-bg-checked);
 }
 
-.fuzzy-ui-table > div > table > tbody > tr:hover {
+.fuzzy-ui-table > .table-scroll > table > tbody > tr:hover {
   background-color: var(--fuzzy-ui-table-row-bg-hover);
 }
 
@@ -656,14 +656,14 @@ div.fuzzy-ui-table > div.table-scroll::after {
   /* float: left; */
 }
 
-.fuzzy-ui-table > div.table-scroll {
+.fuzzy-ui-table > .table-scroll {
   overflow: auto;
   position: relative;
   height: 100%;
   width: 100%;
 }
 
-.fuzzy-ui-table > div.table-scroll::after {
+.fuzzy-ui-table > .table-scroll::after {
   content: '';
   position: absolute;
   top: 0;
@@ -673,7 +673,7 @@ div.fuzzy-ui-table > div.table-scroll::after {
   pointer-events: none;
 }
 
-.fuzzy-ui-table > div.table-scroll > table {
+.fuzzy-ui-table > .table-scroll > table {
   position: sticky;
   border-spacing: 0;
   width: 100%;
@@ -681,7 +681,7 @@ div.fuzzy-ui-table > div.table-scroll::after {
   /* height: 1px; */
 }
 
-.fuzzy-ui-table > div.table-scroll > table > thead {
+.fuzzy-ui-table > .table-scroll > table > thead {
   position: sticky;
   background: white;
   z-index: 2;
