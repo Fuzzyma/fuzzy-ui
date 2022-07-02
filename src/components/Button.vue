@@ -106,7 +106,7 @@ const handleClick = async (ev: MouseEvent) => {
 </script>
 
 <style>
-:root {
+:where(:root) {
   --fuzzy-ui-button-padding: 0.15em 0.4em;
   --fuzzy-ui-button-border-radius: 0.125em;
   --fuzzy-ui-button-border-width: 1px;

@@ -546,7 +546,7 @@ div.fuzzy-ui-table > .table-scroll::after {
 </style>
 
 <style>
-:root {
+:where(:root) {
   --fuzzy-ui-table-col-bg-fixed: #dddddd;
   --fuzzy-ui-table-header-bg: #f5f5f5;
   --fuzzy-ui-table-header-bg-fixed: var(--fuzzy-ui-table-col-bg-fixed);
