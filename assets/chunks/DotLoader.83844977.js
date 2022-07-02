@@ -1,0 +1,1 @@
+import"../index.md.e51bf00a.js";import{_ as o,o as t,c,B as s,F as a,m as e}from"../app.fb5a5154.js";const n={},_=e("circle",{cx:"25",cy:"25",r:"10"},null,-1),l=[_];function d(i,u){return t(),c(a,null,s([0,1,2],r=>e("svg",{key:r,class:"fuzzy-ui-dot-loader",viewBox:"0 0 50 50"},l)),64)}var p=o(n,[["render",d]]);export{p as default};
