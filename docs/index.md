@@ -28,7 +28,7 @@ I always ended up writing a new button component for some project from the groun
 
 This lib aims to solve this problems by giving you the bare bone functionality you always need and lets you style it to your needs. It also makes sure, that no other dependencies are pulled in and you get ONLY what you imported.
 
-### Button
+## Button
 
 ```vue
 <template>
@@ -119,7 +119,7 @@ const data = ref([
 }
 </style>
 
-### Table
+## Table
 
 ```vue
 <template>
