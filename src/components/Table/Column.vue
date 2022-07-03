@@ -1,5 +1,5 @@
 <script lang="ts">
-import { computed, defineComponent, inject, onBeforeUnmount, PropType, reactive, toRefs, useSlots } from 'vue'
+import { computed, defineComponent, inject, onBeforeUnmount, PropType, reactive, toRefs, useAttrs, useSlots } from 'vue'
 import { getId } from '../../utils'
 import { ColConfig, Row, tableProvideKey } from './types'
 import { useLogHooks } from './useLogHooks'
@@ -39,9 +39,6 @@ export default defineComponent({
     },
     order: {
       type: Number,
-    },
-    type: {
-      type: String,
     },
     getterOnEdit: {
       type: Boolean,
@@ -101,6 +98,7 @@ export default defineComponent({
       fixed: computed(() => (props.fixed === true || props.fixed === '' ? 'left' : props.fixed)),
       order: internalOrder,
       hasCustomSetter: computed(() => !!props.setter),
+      attrs: useAttrs(),
     })
 
     registerCol(colKey, adaptedProps)

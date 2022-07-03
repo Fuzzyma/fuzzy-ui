@@ -4,11 +4,12 @@ export type UpdateFnType = (index: number, field: string, value: unknown) => any
 export type Row = Record<string, unknown>
 export type Data = Row[]
 export type ColConfig = {
+  attrs: Record<string, unknown>
   checkbox?: boolean
   editable?: boolean | ((row: Row) => boolean)
   filterable?: boolean
   fixed?: string | boolean
-  getter: (row: Row) => unknown
+  getter: (row: Row, col?: ColConfig) => unknown
   getterOnEdit?: boolean
   hasCustomSetter: boolean
   header: string
@@ -20,7 +21,6 @@ export type ColConfig = {
   slots: Slots
   sortDirection?: 'asc' | 'desc'
   sortable?: boolean
-  type?: string
   width?: string | number
 }
 

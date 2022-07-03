@@ -3,7 +3,7 @@
     <Component
       :is="col.slots.default"
       v-if="col.slots.default"
-      :value-ref="unwrappedValue.value"
+      :value-ref="unwrappedValue.wrapper"
       :row="row"
       :col="col"
       :attrs="listeners"
@@ -15,7 +15,7 @@
         @change="setCheckedRow(row, ($event.target as HTMLInputElement).checked)"
       />
     </label>
-    <input v-else v-model="value" :disabled="!editable" :type="col.type" v-on="listeners" />
+    <input v-else v-model="value" :disabled="!editable" v-bind="col.attrs" v-on="listeners" />
   </td>
 </template>
 
@@ -42,9 +42,9 @@ useLogHooks('cell')
 
 const { setActiveCell, setCheckedRow, updateField } = inject(tableProvideKey)!
 
-const value = ref(props.col.getter(props.row))
+const value = ref(props.col.getter(props.row, props.col))
 const unwrappedValue = {
-  value,
+  wrapper: value,
 }
 
 const editable = computed(() => {
@@ -58,7 +58,7 @@ const editable = computed(() => {
 })
 
 watch(
-  () => props.col.getter(props.row),
+  () => props.col.getter(props.row, props.col),
   val => {
     value.value = val
   }
@@ -68,12 +68,12 @@ const save = async () => {
   await updateField(props.row, props.col, value.value)
 
   // props.col.setter(props.row, value.value)
-  value.value = props.col.getter(props.row)
+  value.value = props.col.getter(props.row, props.col)
   // editOn.value = false
 }
 
 const edit = () => {
-  value.value = String(props.col.getter(props.row))
+  value.value = String(props.col.getter(props.row, props.col))
 }
 
 defineExpose({ edit, save })
@@ -92,13 +92,13 @@ const getRowAndColIndex = () => {
 }
 
 const listeners = computed(() => {
-  if (!props.col.editable) return {}
+  if (!editable.value) return {}
 
   return {
     focus: () => {
       value.value = props.col.getterOnEdit
-        ? props.col.getter(props.row)
-        : props.row[props.col.prop] ?? props.col.getter(props.row)
+        ? props.col.getter(props.row, props.col)
+        : props.row[props.col.prop] ?? props.col.getter(props.row, props.col)
     },
     change: save,
     keydown: (e: KeyboardEvent) => {
@@ -121,7 +121,7 @@ const listeners = computed(() => {
       // }
       if (e.key === 'Escape') {
         e.preventDefault()
-        value.value = String(props.col.getter(props.row))
+        value.value = String(props.col.getter(props.row, props.col))
         return
       }
     },
