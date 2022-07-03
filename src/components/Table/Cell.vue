@@ -15,7 +15,7 @@
         @change="setCheckedRow(row, ($event.target as HTMLInputElement).checked)"
       />
     </label>
-    <input v-else v-model="value" :disabled="!col.editable" :type="col.type" v-on="listeners" />
+    <input v-else v-model="value" :disabled="!editable" :type="col.type" v-on="listeners" />
   </td>
 </template>
 
@@ -46,6 +46,16 @@ const value = ref(props.col.getter(props.row))
 const unwrappedValue = {
   value,
 }
+
+const editable = computed(() => {
+  if (!props.col.editable) {
+    return false
+  }
+  if (typeof props.col.editable === 'boolean') {
+    return props.col.editable
+  }
+  return props.col.editable(props.row)
+})
 
 watch(
   () => props.col.getter(props.row),

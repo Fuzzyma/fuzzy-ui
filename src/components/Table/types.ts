@@ -5,7 +5,7 @@ export type Row = Record<string, unknown>
 export type Data = Row[]
 export type ColConfig = {
   checkbox?: boolean
-  editable?: boolean
+  editable?: boolean | ((row: Row) => boolean)
   filterable?: boolean
   fixed?: string | boolean
   getter: (row: Row) => unknown
