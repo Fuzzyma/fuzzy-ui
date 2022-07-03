@@ -28,7 +28,7 @@ export default defineComponent({
       default: false,
     },
     filterable: Boolean,
-    editable: Boolean,
+    editable: [Boolean, Function] as PropType<ColConfig['editable']>,
     checkbox: Boolean,
     width: [String, Number],
     fixed: [String, Boolean],
