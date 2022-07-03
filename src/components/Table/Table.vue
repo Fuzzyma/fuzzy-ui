@@ -508,6 +508,8 @@ provide(tableProvideKey, {
 // TODO:
 // - Resize observer to calculate new height of container and hide/show shadow
 // - Adding a row doesnt resort the table
+// - support events on column
+// - support editable per cell via function
 </script>
 
 <style scoped>

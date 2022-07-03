@@ -1,6 +1,13 @@
 <template>
   <td ref="tdRef">
-    <Component :is="col.slots.default" v-if="col.slots.default" :row="row" :col="col" />
+    <Component
+      :is="col.slots.default"
+      v-if="col.slots.default"
+      :value-ref="unwrappedValue.value"
+      :row="row"
+      :col="col"
+      :attrs="listeners"
+    />
     <label v-else-if="col.checkbox">
       <input
         :checked="!!value"
@@ -36,6 +43,9 @@ useLogHooks('cell')
 const { setActiveCell, setCheckedRow, updateField } = inject(tableProvideKey)!
 
 const value = ref(props.col.getter(props.row))
+const unwrappedValue = {
+  value,
+}
 
 watch(
   () => props.col.getter(props.row),
