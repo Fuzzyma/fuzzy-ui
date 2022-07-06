@@ -1,14 +1,7 @@
 <template>
   <td ref="tdRef">
-    <Component
-      :is="col.slots.default"
-      v-if="col.slots.default"
-      :value-ref="unwrappedValue.wrapper"
-      :row="row"
-      :col="col"
-      :attrs="listeners"
-    />
-    <label v-else-if="col.checkbox">
+    <CellSlot v-if="col.slots.default" />
+    <label v-else-if="col.checkbox" class="fuzzy-ui-table-cell-checkbox">
       <input
         :checked="!!value"
         type="checkbox"
@@ -128,4 +121,13 @@ const listeners = computed(() => {
     // dblclick: edit,
   }
 })
+
+const CellSlot = () => {
+  return props.col.slots.default?.({
+    valueRef: unwrappedValue.wrapper,
+    row: props.row,
+    col: props.col,
+    attrs: listeners.value,
+  })
+}
 </script>
