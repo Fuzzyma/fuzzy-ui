@@ -43,6 +43,15 @@ export default defineComponent({
     getterOnEdit: {
       type: Boolean,
     },
+    prepend: {
+      type: String,
+    },
+    append: {
+      type: String,
+    },
+    options: {
+      type: Array as PropType<ColConfig['options']>,
+    },
   },
   setup(props) {
     const { registerCol, isCheckedRow, unregisterCol, setCheckedRow, maxOrderNum } = inject(tableProvideKey)!

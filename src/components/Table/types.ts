@@ -4,6 +4,7 @@ export type UpdateFnType = (index: number, field: string, value: unknown) => any
 export type Row = Record<string, unknown>
 export type Data = Row[]
 export type ColConfig = {
+  append?: string
   attrs: Record<string, unknown>
   checkbox?: boolean
   editable?: boolean | ((row: Row) => boolean)
@@ -15,7 +16,9 @@ export type ColConfig = {
   header: string
   hidden?: boolean
   key: string
+  options?: Array<{ label: string; value: any }>
   order: number
+  prepend?: string
   prop: string
   setter: (row: Row, value: unknown) => void
   slots: Slots

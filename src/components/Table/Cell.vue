@@ -8,12 +8,25 @@
         @change="setCheckedRow(row, ($event.target as HTMLInputElement).checked)"
       />
     </label>
-    <input v-else v-model="value" :disabled="!editable" v-bind="col.attrs" v-on="listeners" />
+    <label v-else-if="col.options" class="fuzzy-ui-table-cell-select">
+      <span v-if="col.prepend" class="fuzzy-ui-table-cell-prepend">{{ col.prepend }}</span>
+      <span v-if="col.append" class="fuzzy-ui-table-cell-append">{{ col.append }}</span>
+      <select v-model="value" :disabled="!editable" v-bind="col.attrs" v-on="listeners">
+        <option :value="undefined" disabled hidden v-text="col.attrs.placeholder ?? 'Please Select...'" />
+        <option value="" disabled hidden v-text="col.attrs.placeholder ?? 'Please Select...'" />
+        <option v-for="option in col.options" :key="option.value" :value="option.value" v-text="option.label" />
+      </select>
+    </label>
+    <label v-else>
+      <span v-if="col.prepend" class="fuzzy-ui-table-cell-prepend">{{ col.prepend }}</span>
+      <span v-if="col.append" class="fuzzy-ui-table-cell-append">{{ col.append }}</span>
+      <input v-model="value" :disabled="!editable" v-bind="col.attrs" :type="type" v-on="listeners" />
+    </label>
   </td>
 </template>
 
 <script setup lang="ts">
-import { computed, inject, PropType, ref, Slot, watch } from 'vue'
+import { computed, inject, PropType, ref, Slot, watch, nextTick } from 'vue'
 import { ColConfig, tableProvideKey } from './types'
 import { useLogHooks } from './useLogHooks'
 
@@ -36,9 +49,8 @@ useLogHooks('cell')
 const { setActiveCell, setCheckedRow, updateField } = inject(tableProvideKey)!
 
 const value = ref(props.col.getter(props.row, props.col))
-const unwrappedValue = {
-  wrapper: value,
-}
+
+const type = ref(props.col.attrs.type === 'number' ? 'text' : (props.col.attrs.type as string))
 
 const editable = computed(() => {
   if (!props.col.editable) {
@@ -58,10 +70,11 @@ watch(
 )
 
 const save = async () => {
+  console.log('save')
   await updateField(props.row, props.col, value.value)
 
   // props.col.setter(props.row, value.value)
-  value.value = props.col.getter(props.row, props.col)
+
   // editOn.value = false
 }
 
@@ -92,6 +105,13 @@ const listeners = computed(() => {
       value.value = props.col.getterOnEdit
         ? props.col.getter(props.row, props.col)
         : props.row[props.col.prop] ?? props.col.getter(props.row, props.col)
+      type.value = props.col.attrs.type as string
+    },
+    blur: () => {
+      type.value = props.col.attrs.type === 'number' ? 'text' : (props.col.attrs.type as string)
+      nextTick().then(() => {
+        value.value = props.col.getter(props.row, props.col)
+      })
     },
     change: save,
     keydown: (e: KeyboardEvent) => {
@@ -124,10 +144,10 @@ const listeners = computed(() => {
 
 const CellSlot = () => {
   return props.col.slots.default?.({
-    valueRef: unwrappedValue.wrapper,
+    valueRef: value,
     row: props.row,
     col: props.col,
-    attrs: listeners.value,
+    listeners: listeners.value,
   })
 }
 </script>

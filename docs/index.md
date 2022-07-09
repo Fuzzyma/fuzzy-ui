@@ -88,6 +88,7 @@ const data = ref([
     email: 'john.doe@example.com',
     phone: '+49 123456789',
     dateOfBirth: '01.01.2000',
+    status: 'active',
   },
   {
     name: 'Jane Doe',
@@ -95,6 +96,7 @@ const data = ref([
     email: 'jane.doe@example.com',
     phone: '+49 987654321',
     dateOfBirth: '12.12.2003',
+    status: 'inactive',
   },
   {
     name: 'David Smith',
@@ -102,8 +104,20 @@ const data = ref([
     email: 'david.smith@example.com',
     phone: '+49 987654321',
     dateOfBirth: '03.05.2012',
+    status: '', // show placeholder
   }
 ])
+
+const statusOptions = [
+  {
+    value: 'active',
+    label: 'Active',
+  },
+  {
+    value: 'inactive',
+    label: 'Inactive',
+  },
+]
 </script>
 
 <style>
@@ -123,12 +137,13 @@ const data = ref([
 
 ```vue
 <template>
-  <FUITable :data="data">
-    <FUIColumn header="Name" sortable editable />
-    <FUIColumn header="Age" sortable editable />
-    <FUIColumn header="Email" sortable editable />
-    <FUIColumn header="Phone" sortable editable />
-    <FUIColumn header="Date of Birth" sortable editable type="date" :getter="toDate" :setter="fromDate" getter-on-edit />
+  <FUITable :data="data" show-all>
+    <FUIColumn header="Name" sortable editable fixed="left" width="100" />
+    <FUIColumn header="Age" sortable editable width="200" />
+    <FUIColumn header="Email" sortable editable width="200" />
+    <FUIColumn header="Phone" sortable editable width="200" />
+    <FUIColumn header="Date of Birth" sortable editable type="date" :getter="toDate" :setter="fromDate" getter-on-edit  width="200" />
+    <FUIColumn header="Status" fixed="right" :options="statusOptions" editable width="200" />
   </FUITable>
 </template>
 
@@ -151,6 +166,7 @@ const data = ref([
     email: 'john.doe@example.com',
     phone: '+49 123456789',
     dateOfBirth: '01.01.2000',
+    status: 'active',
   },
   {
     name: 'Jane Doe',
@@ -158,6 +174,7 @@ const data = ref([
     email: 'jane.doe@example.com',
     phone: '+49 987654321',
     dateOfBirth: '12.12.2003',
+    status: 'inactive',
   },
   {
     name: 'David Smith',
@@ -165,15 +182,28 @@ const data = ref([
     email: 'david.smith@example.com',
     phone: '+49 987654321',
     dateOfBirth: '03.05.2012',
+    status: '', // show placeholder
   }
 ])
+
+const statusOptions = [
+  {
+    value: 'active',
+    label: 'Active',
+  },
+  {
+    value: 'inactive',
+    label: 'Inactive',
+  },
+]
 </script>
 ```
 
-<FUITable :data="data">
-  <FUIColumn header="Name" sortable editable />
-  <FUIColumn header="Age" sortable editable />
-  <FUIColumn header="Email" sortable editable />
-  <FUIColumn header="Phone" sortable editable />
-  <FUIColumn header="Date of Birth" sortable editable type="date" :getter="toDate" :setter="fromDate" getter-on-edit />
+<FUITable :data="data" class="vp-raw" show-all>
+  <FUIColumn header="Name" sortable editable fixed="left" width="100" />
+  <FUIColumn header="Age" sortable editable width="200" />
+  <FUIColumn header="Email" sortable editable width="200" />
+  <FUIColumn header="Phone" sortable editable width="200" />
+  <FUIColumn header="Date of Birth" sortable editable type="date" :getter="toDate" :setter="fromDate" getter-on-edit  width="200" />
+  <FUIColumn header="Status" fixed="right" :options="statusOptions" editable width="200" />
 </FUITable>

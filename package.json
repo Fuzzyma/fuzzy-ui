@@ -34,7 +34,9 @@
     "vite": "^2.9.13",
     "vite-plugin-dts": "^1.2.0",
     "vitepress": "^1.0.0-alpha.4",
-    "vue-tsc": "^0.38.2"
+    "vue-tsc": "^0.38.2",
+    "postcss":"^8.4.14",
+    "postcss-prefix-selector":"^1.16.0"
   },
   "license": "MIT"
 }

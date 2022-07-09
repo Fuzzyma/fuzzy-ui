@@ -15,44 +15,55 @@ Lets start with an example that should give you most of the tools you need to us
   -->
     <FUIColumn checkbox fixed width="50" />
     <!--
-    header specifies the headong of the column
-    it will automatically assume that the prop attribute is "colOneIsCool"
+    header specifies the heading of the column
+    it will automatically assume that the prop attribute is "automaticProp"
   -->
-    <FUIColumn header="Col One is cool" />
+    <FUIColumn header="Automatic Prop" />
     <!--
     prop specifies the property that is shown in this column
     order lets you reorder columns as needed. The next 2 columns are swapped
     It is advised to set an order on all unfixed columns if you plan on reordering them
   -->
-    <FUIColumn header="Col2" prop="col6" order="2" />
+    <FUIColumn header="Swapped" prop="swapped" order="2" />
     <!--
     getter and setter can be used to convert the data to something else
     or convert the input to something else if the column is editable
-    If you pass a custom getter, and setter, you dont need to pass prop
+    If you pass a custom getter, and setter, you dont need to pass prop.
+    If you want to edit the "getted" value, you also have to set "getter-on-edit".
+    Otherwise, the underlying source is displayed when editing (=focusing on the cell)
   -->
-    <FUIColumn header="Col3" :getter="getterCol3" :setter="setterCol3" order="1" editable />
+    <FUIColumn header="Getter/Setter" :getter="getterExample" :setter="setterExample" order="1" editable />
+    <!--
+      You can also pass a function to editable which lets you decide if a cell is editable on a row by row basis.
+    -->
+    <FUIColumn header="Editable" prop="editable" order="3" editable :editable="isEditable" />
     <!--
     sortable will make this column... sortable
   -->
-    <FUIColumn header="Col4" prop="col4" order="3" sortable />
+    <FUIColumn header="Sortable" prop="sortable" order="4" sortable />
     <!--
     you can also pass a sort function to the sortable attribute
   -->
-    <FUIColumn header="Col5" prop="col4" order="4" :sortable="customSort" />
+    <FUIColumn header="Has Sort Func" prop="hasSortFunc" order="5" :sortable="customSort" />
     <!--
     If you need to hide columns, you can use the hidden attribute
     CAUTION: Dont use v-if and v-show. They will break the table
   -->
-    <FUIColumn header="Col6" prop="col6" order="5" hidden />
+    <FUIColumn header="Hidden" prop="hidden" order="6" hidden />
+    <!-- 
+      Pass options to render a select field instead of an input field
+      Pass editable to allow it to be changeable
+    -->
+    <FUIColumn header="Select" prop="select" order="7" editable :options="selectOptions" />
     <!-- 
     Example of a fixed-right column
   -->
-    <FUIColumn header="Col7" prop="col7" fixed="right" width="100" />
+    <FUIColumn header="Fixed Right" prop="fixedRight" fixed="right" width="100" />
     <!--
     You can pass custom components (e.g. buttons) as slot to the column
   -->
-    <FUIColumn header="Col8" prop="col8" order="6" v-slot="{ row, col }">
-      <button @click="onClickCol8(row, col)">Click me</button>
+    <FUIColumn header="Custom Slot" prop="customSlot" order="9" v-slot="{ row, col, valueRef, listeners }">
+      <button @click="onClickColCustomerSlot(row, col, valueRef, listeners)">Click me</button>
     </FUIColumn>
   </FUITable>
 </template>
@@ -77,46 +88,72 @@ const tableRef = ref()
 const tableData = ref([
   {
     // All columns defined above with random content:
-    colOneIsCool: generateRandomString(5, 10),
-    // We dont need col2 because it is never accessed
-    col3: 0.12345
-    col4: generateRandomString(5, 10),
-    col5: generateRandomString(5, 10),
-    col6: generateRandomString(5, 10),
-    col7: generateRandomString(5, 10),
-    col8: generateRandomString(5, 10),
+    automaticProp: generateRandomString(5, 10),
+    swapped: generateRandomString(5, 10),
+    getterSetter: 0.12345
+    editable: generateRandomString(5, 10),
+    sortable: generateRandomString(5, 10),
+    hasSortFunc: generateRandomString(5, 10),
+    hidden: generateRandomString(5, 10),
+    select: 'option1'
+    fixedRight: generateRandomString(5, 10),
   },
   {
     // All columns defined above with random content:
-    colOneIsCool: generateRandomString(5, 10),
-    // We dont need col2 because it is never accessed
-    col3: 0.1358653
-    col4: generateRandomString(5, 10),
-    col5: generateRandomString(5, 10),
-    col6: generateRandomString(5, 10),
-    col7: generateRandomString(5, 10),
-    col8: generateRandomString(5, 10),
+    automaticProp: generateRandomString(5, 10),
+    getterSetter: 0.1358653
+    editable: generateRandomString(5, 10),
+    sortable: generateRandomString(5, 10),
+    hasSortFunc: generateRandomString(5, 10),
+    hidden: generateRandomString(5, 10),
+    select: '' // Leave empty or set to undefined to show placeholder
+    fixedRight: generateRandomString(5, 10),
   },
 ])
 
+const selectOptions = [
+  {
+    label: 'Option 1',
+    value: 'option1'
+  },
+  {
+    label: 'Option 2',
+    value: 'option2'
+  },
+  {
+    label: 'Option 3',
+    value: 'option3'
+  },
+]
+
 
 // Hide some precision and only show it when editing
-const getterCol3 = (row: Row) => {
-  return row.col3.toFixed(2)
+const getterExample = (row: Row) => {
+  return row.getterSetter.toFixed(2)
 }
 
 // Converts string to number
-const setterCol3 = (row: Row, value: string) => {
-  row.col3 = parseFloat(value)
+const setterExample = (row: Row, value: string) => {
+  row.getterSetter = parseFloat(value)
+}
+
+// Only allows editing when automaticProp col is not empty
+const isEditable = (row: Row) => {
+  return row.automaticProp.length > 0
 }
 
 // sort string by their length instead of their content
 const customSort = (a: Row, b: Row) => {
-  return a.col4.length - b.col4.length
+  return a.hasSortFunc.length - b.hasSortFunc.length
 }
 
-const onClickCol8 = (row: Row, col: Col) => {
-  console.log(row, col)
+// The function gets passed all the properties that are passed to the slot:
+// row: the row object that holds the data
+// col: the column object that holds the column definition
+// valueRef: the reference to the value of the cell (unefined in this case because this column is not backed by any data)
+// listeners: event handlers that manage focus and blur events for any inputs that are probably used in the slot
+const onClickColCustomerSlot = (row: Row, col: Col, valueRef: Ref<unknown>, listeners: any) => {
+  console.log(row, col, valueRef, listeners)
 }
 </script>
 ```
@@ -130,7 +167,7 @@ To summarize - These are the props you can use on a column:
 - order: The order of the column. This is used to reorder the columns
 - sortable: Makes this column sortable
 - hidden: Hides this column
-- editable: Makes this column editable
+- editable: Makes this column editable. Can be a function to decide on per row basis
 - fixed: Makes this column fixed to the left or right
 - width: The width of the column
 - getter-on-edit: Usually, when a getter is used, you will still see the source data when you edit the field. This is to make sure that precision in numbers doesnt get lost. However, sometimes this is not desired e.g. when using date inputs that take only strings of the form yyyy-mm-dd. This prop can be set, to make sure, the getter value is used on edit as well
@@ -154,6 +191,10 @@ tableRef.value.resetFilter()
 **CAUTION**: The data prop is used as source AS IS. That means, changing the array WILL result in the table changing. This is by design and to avoid expensive rerenders. That also means, you can add rows to the table by just pushing into the data array.
 
 ### Finally: Table props
+
+Lets start with the easy one:
+
+- show-all: Shows all rows by default and will not try to infer the height of the table. Use it, if your table has no defined height and should auto size. If you set a height directly or indirectly (e.g. through flex box), you should not use this prop.
 
 Next to the obvious :data prop which can be used v-model as well, it is possible to hook the update-cycle of the table.
 If you use them, you are responsable for the update of the table data. Passing a noop will basically mean that all changes in fields are reverted when you leave the field:
@@ -195,6 +236,7 @@ The following css vars can be changed to change the styling of the table:
   --fuzzy-ui-table-cell-color: #333;
   --fuzzy-ui-table-cell-border-color: #e5e5e5;
   --fuzzy-ui-table-cell-border-width: 1px;
+  --fuzzy-ui-table-cell-focus-color: #00f;
   --fuzzy-ui-table-cell-min-width: auto;
   --fuzzy-ui-table-cell-height: calc(var(--fuzzy-ui-table-cell-font-size) + var(--fuzzy-ui-table-cell-padding) * 2);
   --fuzzy-ui-table-row-height: calc(

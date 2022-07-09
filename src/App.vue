@@ -15,6 +15,29 @@ const generateRandomString = (minlen: number, maxlen: number) => {
   return result
 }
 
+const countryOptions = [
+  {
+    value: 'US',
+    label: 'United States',
+  },
+  {
+    value: 'CA',
+    label: 'Canada',
+  },
+  {
+    value: 'UK',
+    label: 'United Kingdom',
+  },
+  {
+    value: 'AU',
+    label: 'Australia',
+  },
+  {
+    value: 'NZ',
+    label: 'New Zealand',
+  },
+]
+
 const createSampleRow = (a: any, i: number) => {
   return {
     id: Math.random().toString(36).slice(-6),
@@ -26,7 +49,7 @@ const createSampleRow = (a: any, i: number) => {
     city: generateRandomString(5, 50),
     state: generateRandomString(5, 50),
     zip: 10001,
-    country: generateRandomString(5, 50),
+    country: countryOptions[~~(Math.random() * countryOptions.length)].value,
     phone: generateRandomString(5, 50),
     email: generateRandomString(5, 50),
     website: generateRandomString(5, 50),
@@ -65,6 +88,7 @@ const data = ref([
     id: Math.random().toString(36).slice(-6),
     firstName: 'John',
     lastName: 'Doe',
+    country: '',
     age: 30,
     address: '555 Main St',
     city: 'New York',
@@ -186,9 +210,11 @@ const switchColumnOrder = () => {
           <Button @click="changeCell(row)">Change Row Object</Button>
         </Column>
         <Column header="Zip" sortable filterable editable type="number"></Column>
-        <Column header="Country" sortable filterable editable></Column>
+        <Column header="Country" sortable filterable editable :options="countryOptions"></Column>
         <Column header="Phone" sortable filterable editable></Column>
-        <Column header="Email" sortable filterable editable></Column>
+        <Column v-slot="{ valueRef, listeners }" header="Email" sortable filterable editable>
+          <input v-model="valueRef.value" v-on="listeners" />
+        </Column>
         <Column header="Website" sortable filterable editable></Column>
         <Column header="Company" sortable filterable editable></Column>
         <Column header="Company Address" sortable filterable editable></Column>

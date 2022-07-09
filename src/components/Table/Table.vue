@@ -63,6 +63,9 @@ const props = defineProps({
   onUpdateField: {
     type: Function as PropType<UpdateFnType>,
   },
+  showAll: {
+    type: Boolean,
+  },
 })
 
 const emit = defineEmits<{
@@ -91,7 +94,7 @@ const checkedRows = ref(new Set<RowType>())
 const rowKeys = ref(new Map<RowType, string>())
 const filteredRowsSet = ref(new Set<RowType>(data.value))
 
-const numberOfRows = ref(0)
+const numberOfRows = ref(props.showAll ? Infinity : 0)
 const currentRow = ref(Infinity)
 const currentRows = ref<RowType[]>([])
 const partialRow = ref(0)
@@ -443,7 +446,7 @@ watchEffect(() => {
 
   const shadowRuleLeft = `div#${uniqueId} div.shadow-left { left: ${shadowPosLeft}px }`
 
-  const rightPos = shadowPosRight + (wrapperRef.value?.offsetWidth ?? 0) - (wrapperRef.value?.clientWidth ?? 0)
+  const rightPos = shadowPosRight + scrollbarWidth.value
   const shadowRuleRight = `div#${uniqueId} div.shadow-right { right: ${rightPos}px }`
 
   style.innerHTML = [
@@ -476,7 +479,7 @@ onMounted(() => {
   rowHeight.value = eval(replaceEm)
 
   const thRowHeight = parseInt(window.getComputedStyle(wrapper).getPropertyValue('--fuzzy-ui-table-header-height'))
-  numberOfRows.value = Math.ceil((wrapper.clientHeight - thRowHeight) / rowHeight.value) + 1
+  numberOfRows.value = props.showAll ? Infinity : Math.ceil((wrapper.clientHeight - thRowHeight) / rowHeight.value) + 1
 
   updateCurrentRow()
 
@@ -509,7 +512,6 @@ provide(tableProvideKey, {
 // - Resize observer to calculate new height of container and hide/show shadow
 // - Adding a row doesnt resort the table
 // - support events on column
-// - support editable per cell via function
 </script>
 
 <style scoped>
@@ -567,6 +569,7 @@ div.fuzzy-ui-table > .table-scroll::after {
   --fuzzy-ui-table-cell-color: #333;
   --fuzzy-ui-table-cell-border-color: #e5e5e5;
   --fuzzy-ui-table-cell-border-width: 1px;
+  --fuzzy-ui-table-cell-focus-color: #00f;
   --fuzzy-ui-table-cell-min-width: auto;
   --fuzzy-ui-table-cell-height: calc(var(--fuzzy-ui-table-cell-font-size) + var(--fuzzy-ui-table-cell-padding) * 2);
   --fuzzy-ui-table-row-height: calc(
@@ -610,7 +613,7 @@ div.fuzzy-ui-table > .table-scroll::after {
 
 .fuzzy-ui-table > .table-scroll > table > tbody > tr > td > :is(input, label) {
   all: unset;
-  padding: var(--fuzzy-ui-table-cell-padding);
+  /* padding: var(--fuzzy-ui-table-cell-padding); */
   box-sizing: border-box;
   width: 100%;
   height: 100%;
@@ -619,12 +622,96 @@ div.fuzzy-ui-table > .table-scroll::after {
   line-height: 1;
 }
 
-.fuzzy-ui-table > .table-scroll > table tr > :is(td, th) > label > input {
+.fuzzy-ui-table > .table-scroll > table tr > :is(td, th) > label.fuzzy-ui-table-cell-checkbox > input {
   margin: auto;
 }
 
-.fuzzy-ui-table > .table-scroll > table > tbody > tr > td > input:focus {
-  outline: auto 1px Highlight;
+.fuzzy-ui-table > .table-scroll > table > tbody > tr > td > label:focus-within {
+  outline: 2px ridge var(--fuzzy-ui-table-cell-focus-color);
+}
+
+.fuzzy-ui-table > .table-scroll > table > tbody > tr > td > label:not(.fuzzy-ui-table-cell-checkbox) {
+  display: flex;
+}
+
+.fuzzy-ui-table > .table-scroll > table > tbody > tr > td > label:not(.fuzzy-ui-table-cell-checkbox) > span {
+  flex-shrink: 0;
+}
+
+.fuzzy-ui-table
+  > .table-scroll
+  > table
+  > tbody
+  > tr
+  > td
+  > label:not(.fuzzy-ui-table-cell-checkbox)
+  > span.fuzzy-ui-table-cell-prepend {
+  padding: var(--fuzzy-ui-table-cell-padding);
+  padding-right: 0;
+}
+
+.fuzzy-ui-table
+  > .table-scroll
+  > table
+  > tbody
+  > tr
+  > td
+  > label:not(.fuzzy-ui-table-cell-checkbox)
+  > span.fuzzy-ui-table-cell-append {
+  padding: var(--fuzzy-ui-table-cell-padding);
+  padding-left: 0;
+  order: 2;
+}
+
+.fuzzy-ui-table
+  > .table-scroll
+  > table
+  > tbody
+  > tr
+  > td
+  > label:not(.fuzzy-ui-table-cell-checkbox)
+  > :is(input, select) {
+  flex-grow: 1;
+  background: none;
+  min-width: 0;
+  padding: var(--fuzzy-ui-table-cell-padding);
+  width: 100%;
+  border: none;
+}
+
+.fuzzy-ui-table
+  > .table-scroll
+  > table
+  > tbody
+  > tr
+  > td
+  > label:not(.fuzzy-ui-table-cell-checkbox)
+  > span.fuzzy-ui-table-cell-prepend
+  + :is(input, select) {
+  padding-left: 0;
+}
+
+.fuzzy-ui-table
+  > .table-scroll
+  > table
+  > tbody
+  > tr
+  > td
+  > label:not(.fuzzy-ui-table-cell-checkbox)
+  > span.fuzzy-ui-table-cell-append
+  + :is(input, select) {
+  padding-right: 0;
+}
+
+.fuzzy-ui-table
+  > .table-scroll
+  > table
+  > tbody
+  > tr
+  > td
+  > label:not(.fuzzy-ui-table-cell-checkbox)
+  > :is(input, select):focus {
+  outline: none;
 }
 
 .fuzzy-ui-table > .table-scroll > table > thead > tr > th > div > div {
@@ -680,6 +767,7 @@ div.fuzzy-ui-table > .table-scroll::after {
   border-spacing: 0;
   width: 100%;
   top: 0;
+  border-collapse: separate;
   /* height: 1px; */
 }
 
