@@ -1,5 +1,5 @@
 <template>
-  <div v-bind="$attrs" :id="uniqueId" class="fuzzy-ui-table">
+  <div v-id v-bind="$attrs" class="fuzzy-ui-table">
     <component :is="'style'" v-once ref="styleRef"></component>
     <Columns />
     <div ref="wrapperRef" class="table-scroll">
@@ -72,7 +72,11 @@ const emit = defineEmits<{
   (e: 'selection-change', row: RowType, checked: boolean): void
 }>()
 
-const uniqueId = ref(getId('fuzzy-ui-table-'))
+const uniqueId = getId('fuzzy-ui-table-')
+
+const vId = (el: HTMLElement) => {
+  el.setAttribute('id', uniqueId)
+}
 
 if (import.meta.env.DEV) {
   useLogHooks('table', uniqueId)
@@ -371,7 +375,7 @@ watchEffect(() => {
   const rightFixedInfo: [index: number, width: number, pos: number][] = []
   const widthInfo: [index: number, width: number][] = []
 
-  const id = uniqueId.value
+  const id = uniqueId
 
   cols.forEach(([, col], i) => {
     if (col.hidden) {
