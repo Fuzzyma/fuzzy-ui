@@ -72,7 +72,7 @@ const emit = defineEmits<{
   (e: 'selection-change', row: RowType, checked: boolean): void
 }>()
 
-const uniqueId = getId('fuzzy-ui-table-')
+const uniqueId = ref(getId('fuzzy-ui-table-'))
 
 if (import.meta.env.DEV) {
   useLogHooks('table', uniqueId)
@@ -371,6 +371,8 @@ watchEffect(() => {
   const rightFixedInfo: [index: number, width: number, pos: number][] = []
   const widthInfo: [index: number, width: number][] = []
 
+  const id = uniqueId.value
+
   cols.forEach(([, col], i) => {
     if (col.hidden) {
       hiddenIndexes.push(i + 1)
@@ -400,14 +402,14 @@ watchEffect(() => {
     })
 
   const hiddenNthChild = hiddenIndexes.map(i => `:nth-child(${i})`).join(',')
-  const hideSelectors = `div#${uniqueId} > div > table tr > :is(td, th):is(${hiddenNthChild})`
+  const hideSelectors = `div#${id} > div > table tr > :is(td, th):is(${hiddenNthChild})`
 
   const fixedNthChild = fixedIndexes.map(i => `:nth-child(${i})`).join(',')
-  const fixedSelectors = `div#${uniqueId} > div > table tr > :is(td, th):is(${fixedNthChild})`
-  const fixedSelectorsTd = `div#${uniqueId} > div > table tr > td:is(${fixedNthChild})`
-  const fixedSelectorsTdChecked = `div#${uniqueId} > div > table tr.checked > td:is(${fixedNthChild})`
-  const fixedSelectorsTdHover = `div#${uniqueId} > div > table tr:hover > td:is(${fixedNthChild})`
-  const fixedSelectorsTh = `div#${uniqueId} > div > table tr > th:is(${fixedNthChild})`
+  const fixedSelectors = `div#${id} > div > table tr > :is(td, th):is(${fixedNthChild})`
+  const fixedSelectorsTd = `div#${id} > div > table tr > td:is(${fixedNthChild})`
+  const fixedSelectorsTdChecked = `div#${id} > div > table tr.checked > td:is(${fixedNthChild})`
+  const fixedSelectorsTdHover = `div#${id} > div > table tr:hover > td:is(${fixedNthChild})`
+  const fixedSelectorsTh = `div#${id} > div > table tr > th:is(${fixedNthChild})`
 
   const hideRule = hiddenNthChild ? `${hideSelectors} { display: none; }` : ''
   const fixedRule = fixedNthChild ? `${fixedSelectors} { position: sticky; z-index: 1; }` : ''
@@ -422,19 +424,19 @@ watchEffect(() => {
 
   const posAndWidthRulesLeft = leftFixedInfo
     .map(([i, width, left]) => {
-      return `div#${uniqueId} > div > table tr > :nth-child(${i}) { left: ${left}px; width: ${width}px; min-width: ${width}px; }`
+      return `div#${id} > div > table tr > :nth-child(${i}) { left: ${left}px; width: ${width}px; min-width: ${width}px; }`
     })
     .join('\n')
 
   const posAndWidthRulesRight = rightFixedInfo
     .map(([i, width, right]) => {
-      return `div#${uniqueId} > div > table tr > :nth-child(${i}) { right: ${right}px; width: ${width}px; min-width: ${width}px; }`
+      return `div#${id} > div > table tr > :nth-child(${i}) { right: ${right}px; width: ${width}px; min-width: ${width}px; }`
     })
     .join('\n')
 
   const widthRules = widthInfo
     .map(([i, width]) => {
-      return `div#${uniqueId} > div > table tr > :nth-child(${i}) { width: ${width}px; max-width: ${width}px; min-width: ${width}px; }`
+      return `div#${id} > div > table tr > :nth-child(${i}) { width: ${width}px; max-width: ${width}px; min-width: ${width}px; }`
     })
     .join('\n')
 
@@ -444,10 +446,10 @@ watchEffect(() => {
   const shadowPosLeft = hasLeft ? leftFixedInfo.at(-1)![1] + leftFixedInfo.at(-1)![2] : 0
   const shadowPosRight = hasRight ? rightFixedInfo.at(-1)![1] + rightFixedInfo.at(-1)![2] : 0
 
-  const shadowRuleLeft = `div#${uniqueId} div.shadow-left { left: ${shadowPosLeft}px }`
+  const shadowRuleLeft = `div#${id} div.shadow-left { left: ${shadowPosLeft}px }`
 
   const rightPos = shadowPosRight + scrollbarWidth.value
-  const shadowRuleRight = `div#${uniqueId} div.shadow-right { right: ${rightPos}px }`
+  const shadowRuleRight = `div#${id} div.shadow-right { right: ${rightPos}px }`
 
   style.innerHTML = [
     hideRule,
