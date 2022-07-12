@@ -148,6 +148,7 @@ const CellSlot = () => {
     row: props.row,
     col: props.col,
     listeners: listeners.value,
+    type: type.value,
   })
 }
 </script>
