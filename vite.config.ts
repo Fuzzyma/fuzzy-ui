@@ -18,6 +18,9 @@ export default defineConfig({
     }),
     // dts(),
   ],
+  server: {
+    port: 3000,
+  },
   /** Comment in to create a transpiled version of every component with typings
    ** that can be imported in javascript only environments
    ** Since I assume, that every project using vue has a build pipeline that understands vue and typescript files,

@@ -151,11 +151,28 @@ const switchColumnOrder = () => {
 }
 
 // const updateData = console.log
+let animationFrame: any
+const startTest = () => {
+  animationFrame = setTimeout(animateScroll, 30)
+
+  setTimeout(() => {
+    clearTimeout(animationFrame)
+  }, 5000)
+}
+
+const animateScroll = () => {
+  const scrollEl = tableRef.value!.scrollRef as HTMLDivElement
+  if (scrollEl) {
+    scrollEl.scrollTop = scrollEl.scrollTop + 20
+    animationFrame = setTimeout(animateScroll, 30)
+  }
+}
 </script>
 
 <template>
   <div style="display: flex; flex-direction: column; height: 100vh">
     <div style="display: flex; flex: row">
+      <Button @click="startTest">Start Test</Button>
       <Button @click="changeHeader">Change Header</Button>
       <Button @click="swapRow">Swap Row 1 and 2</Button>
       <Button @click="filterTable">Filter Age 0-30</Button>
@@ -258,6 +275,5 @@ html,
 body {
   margin: 0;
   padding: 0;
-  --fuzzy-ui-table-cell-min-width: 100px;
 }
 </style>

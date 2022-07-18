@@ -6,11 +6,11 @@
     :type="is === 'button' && !$attrs.href && $attrs.type ? 'button' : $attrs.type"
     @click="handleClick"
   >
-    <div class="fuzzy-ui-button__content" :class="{ loading, iconRight }">
+    <div class="fuzzy-ui-button__content" :class="{ loading, iconRight, hasSlot: $slots.default }">
       <slot>
         <slot name="icon"><component :is="icon" v-if="icon" /></slot>
         <slot name="label">
-          <span v-if="label">{{ label }}</span>
+          <span v-if="label" class="fuzzy-ui-button__content_label">{{ label }}</span>
         </slot>
       </slot>
     </div>
@@ -132,6 +132,7 @@ const handleClick = async (ev: MouseEvent) => {
   align-items: center;
   justify-content: center;
   border-style: solid;
+  max-width: 100%;
 }
 
 .fuzzy-ui-button.loading {
@@ -143,13 +144,19 @@ const handleClick = async (ev: MouseEvent) => {
 }
 
 .fuzzy-ui-button__content {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  /* transition: opacity 0.25s ease-in-out; */
+  transition: background-color 0.1s ease-in-out, color 0.1s ease-in-out;
+}
+
+.fuzzy-ui-button__content:not(.hasSlot) {
   display: flex;
-  flex: 1 1 0;
   align-items: center;
   justify-content: center;
   gap: 0.25em;
-  /* transition: opacity 0.25s ease-in-out; */
-  transition: background-color 0.1s ease-in-out, color 0.1s ease-in-out;
+  flex: 1 1 0;
+  max-width: 100%;
 }
 
 .fuzzy-ui-button__content.iconRight {
@@ -158,6 +165,11 @@ const handleClick = async (ev: MouseEvent) => {
 
 .fuzzy-ui-button__content.loading {
   opacity: 0;
+}
+
+.fuzzy-ui-button__content_label {
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .fuzzy-ui-button__loader {
