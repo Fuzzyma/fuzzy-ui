@@ -171,6 +171,10 @@ To summarize - These are the props you can use on a column:
 - fixed: Makes this column fixed to the left or right
 - width: The width of the column
 - getter-on-edit: Usually, when a getter is used, you will still see the source data when you edit the field. This is to make sure that precision in numbers doesnt get lost. However, sometimes this is not desired e.g. when using date inputs that take only strings of the form yyyy-mm-dd. This prop can be set, to make sure, the getter value is used on edit as well
+- class: This class is placed on every td of that column and can be used to style the label and input that is shown in the cell
+- options: This is used to render a select field instead of an input field. It takes an array of objects with label and value properties
+
+All other attributes are passed to the input field that is rendered in the cell. This is useful for e.g. adding a placeholder to the input field, steps or other input specific attributes. It can also be used to add data to the input field that is used in the getter or setter function.
 
 You may have missed the filter functionality. This is not by chance. Filters are not realized through some prop magic but have to be invoked manually. This is because filters are mostly too different to allow for a generic approach.
 

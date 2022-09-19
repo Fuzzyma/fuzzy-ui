@@ -7,6 +7,7 @@ export type ColConfig = {
   append?: string
   attrs: Record<string, unknown>
   checkbox?: boolean
+  class?: string | Array<any> | object
   editable?: boolean | ((row: Row) => boolean)
   filterable?: boolean
   fixed?: string | boolean

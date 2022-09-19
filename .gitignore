@@ -27,3 +27,4 @@ components.d.ts
 ./src/Playground.vue
 dist
 public
+.yarn/

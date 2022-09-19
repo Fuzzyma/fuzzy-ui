@@ -1,5 +1,5 @@
 <template>
-  <td ref="tdRef">
+  <td ref="tdRef" :class="col.class">
     <CellSlot v-if="col.slots.default" />
     <label v-else-if="col.checkbox" class="fuzzy-ui-table-cell-checkbox">
       <input
