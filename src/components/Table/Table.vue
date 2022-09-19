@@ -796,7 +796,7 @@ export default defineComponent({
 } */
 div.shadow {
   position: absolute;
-  width: 5px;
+  width: var(--fuzzy-ui-table-shadow-width);
   top: 0;
   height: min(
     calc(
@@ -814,8 +814,8 @@ div.shadow {
   width: calc(100% - v-bind('scrollbarWidth + "px"'));
 } */
 div.shadow-top {
-  background: linear-gradient(180deg, gray, transparent);
-  height: 5px;
+  background: linear-gradient(180deg, var(--fuzzy-ui-table-shadow-color), transparent);
+  height: var(--fuzzy-ui-table-shadow-width);
   top: calc(var(--fuzzy-ui-table-header-height) - 1px);
   width: calc(100% - var(--fuzzy-ui-table-scrollbar_width));
 }
@@ -862,6 +862,8 @@ div.fuzzy-ui-table > .table-scroll::after {
   --fuzzy-ui-table-header-height: 40px;
   --fuzzy-ui-table-header-padding: 10px;
   --fuzzy-ui-table-header-border: 1px solid #e5e5e5;
+  --fuzzy-ui-table-shadow-color: gray;
+  --fuzzy-ui-table-shadow-width: 5px;
   --fuzzy-ui-table-cell-padding: 10px;
   --fuzzy-ui-table-cell-font-size: 14px;
   --fuzzy-ui-table-cell-font-weight: normal;
@@ -1112,11 +1114,11 @@ div.fuzzy-ui-table > .table-scroll::after {
 }
 
 .fuzzy-ui-table > div.shadow-left {
-  background: linear-gradient(90deg, gray, transparent);
+  background: linear-gradient(90deg, var(--fuzzy-ui-table-shadow-color), transparent);
 }
 
 .fuzzy-ui-table > div.shadow-right {
-  background: linear-gradient(90deg, transparent, gray);
+  background: linear-gradient(90deg, transparent, var(--fuzzy-ui-table-shadow-color));
 }
 
 .fuzzy-ui-table:not(.fuzzy-ui-table-show-all) tr {

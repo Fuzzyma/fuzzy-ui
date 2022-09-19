@@ -234,6 +234,8 @@ The following css vars can be changed to change the styling of the table:
   --fuzzy-ui-table-header-height: 40px;
   --fuzzy-ui-table-header-padding: 10px;
   --fuzzy-ui-table-header-border-bottom: 1px solid #e5e5e5;
+  --fuzzy-ui-table-shadow-color: gray;
+  --fuzzy-ui-table-shadow-width: 5px;
   --fuzzy-ui-table-cell-padding: 10px;
   --fuzzy-ui-table-cell-font-size: 14px;
   --fuzzy-ui-table-cell-font-weight: normal;
