@@ -65,6 +65,11 @@ Lets start with an example that should give you most of the tools you need to us
     <FUIColumn header="Custom Slot" prop="customSlot" order="9" v-slot="{ row, col, valueRef, listeners }">
       <button @click="onClickColCustomerSlot(row, col, valueRef, listeners)">Click me</button>
     </FUIColumn>
+
+    <!--
+      You can create dynamic attributes for the column based on row data with :dynamic-attr
+    -->
+    <FUIColumn header="Dynamic Attr" prop="dynamicAttr" order="10" :dynamic-attr="getDynamicAttr" />
   </FUITable>
 </template>
 
@@ -97,6 +102,7 @@ const tableData = ref([
     hidden: generateRandomString(5, 10),
     select: 'option1'
     fixedRight: generateRandomString(5, 10),
+    dynamicAttr: 10
   },
   {
     // All columns defined above with random content:
@@ -108,6 +114,7 @@ const tableData = ref([
     hidden: generateRandomString(5, 10),
     select: '' // Leave empty or set to undefined to show placeholder
     fixedRight: generateRandomString(5, 10),
+    dynamicAttr: 20
   },
 ])
 
@@ -155,6 +162,14 @@ const customSort = (a: Row, b: Row) => {
 const onClickColCustomerSlot = (row: Row, col: Col, valueRef: Ref<unknown>, listeners: any) => {
   console.log(row, col, valueRef, listeners)
 }
+
+const getDynamicAttr = (row: Row, col: Col) => {
+  return {
+    style: {
+      color: row.dynamicAttr > 15 ? 'red' : 'green'
+    }
+  }
+}
 </script>
 ```
 
@@ -173,6 +188,7 @@ To summarize - These are the props you can use on a column:
 - getter-on-edit: Usually, when a getter is used, you will still see the source data when you edit the field. This is to make sure that precision in numbers doesnt get lost. However, sometimes this is not desired e.g. when using date inputs that take only strings of the form yyyy-mm-dd. This prop can be set, to make sure, the getter value is used on edit as well
 - class: This class is placed on every td of that column and can be used to style the label and input that is shown in the cell
 - options: This is used to render a select field instead of an input field. It takes an array of objects with label and value properties
+- colAttrs: Pass a function that generates attributes for the column. This is useful if you want to add attributes based on row data (e.g. change the color)
 
 All other attributes are passed to the input field that is rendered in the cell. This is useful for e.g. adding a placeholder to the input field, steps or other input specific attributes. It can also be used to add data to the input field that is used in the getter or setter function.
 
