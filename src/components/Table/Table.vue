@@ -289,15 +289,17 @@ export default defineComponent({
 
     const focusCell = (rowIndex: number, colIndex: number) => {
       nextTick(() => {
+        const i = ((rowIndex - 1 + numberOfRows.value) % numberOfRows.value) + 1
         const el = scrollRef.value?.querySelector(
-          `table > tbody > tr:nth-child(${rowIndex}) > td:nth-child(${colIndex + 1}) input`
+          `table > tbody > tr:nth-child(${i}) > td:nth-child(${colIndex + 1}) input`
         ) as HTMLInputElement
 
         el?.focus({ preventScroll: true })
       })
     }
 
-    const setActiveCell = (rowIndex: number, colIndex: number, direction: string) => {
+    const setActiveCell = (_rowIndex: number, colIndex: number, direction: string, row: RowType) => {
+      const rowIndex = rowKeys2.get(row) ?? 0
       switch (direction) {
         case 'up':
           scrollRef.value?.scrollBy(0, -rowHeight.value)
@@ -625,7 +627,7 @@ export default defineComponent({
           let key = rowKeys2.get(row)
 
           if (!key) {
-            key = freed.shift() || rowKeys2.size
+            key = freed.shift() || rowKeys2.size + 1
             rowKeys2.set(row, key)
           }
 
@@ -785,15 +787,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-/* div.shadow {
-  position: absolute;
-  width: 5px;
-  top: 0;
-  height: min(
-    calc(v-bind('filteredRows.length') * var(--fuzzy-ui-table-row-height) + var(--fuzzy-ui-table-header-height)),
-    calc(100% - v-bind('scrollbarHeight + "px"'))
-  );
-} */
 div.shadow {
   position: absolute;
   width: var(--fuzzy-ui-table-shadow-width);
@@ -807,12 +800,6 @@ div.shadow {
   );
 }
 
-/* div.shadow-top {
-  background: linear-gradient(180deg, gray, transparent);
-  height: 5px;
-  top: calc(var(--fuzzy-ui-table-header-height) - 1px);
-  width: calc(100% - v-bind('scrollbarWidth + "px"'));
-} */
 div.shadow-top {
   background: linear-gradient(180deg, var(--fuzzy-ui-table-shadow-color), transparent);
   height: var(--fuzzy-ui-table-shadow-width);
@@ -820,13 +807,6 @@ div.shadow-top {
   width: calc(100% - var(--fuzzy-ui-table-scrollbar_width));
 }
 
-/* div.no-data {
-  position: absolute;
-  top: calc(var(--fuzzy-ui-table-header-height) - 1px);
-  left: 0;
-  width: calc(100% - v-bind('scrollbarWidth + "px"'));
-  height: calc(100% - v-bind('scrollbarHeight + "px"') - var(--fuzzy-ui-table-header-height));
-} */
 div.no-data {
   position: absolute;
   top: calc(var(--fuzzy-ui-table-header-height) - 1px);
@@ -835,17 +815,9 @@ div.no-data {
   height: calc(100% - var(--fuzzy-ui-table-scrollbar_height) - var(--fuzzy-ui-table-header-height));
 }
 
-/* div.fuzzy-ui-table > .table-scroll::after {
-  height: calc(v-bind('filteredRows.length') * var(--fuzzy-ui-table-row-height));
-} */
-
 div.fuzzy-ui-table > .table-scroll::after {
   height: calc(var(--fuzzy-ui-table-filtered_rows_length) * var(--fuzzy-ui-table-row-height));
 }
-
-/* div.fuzzy-ui-table > .table-scroll > table > tbody {
-  transform: translateY(v-bind('(-partialRow) + "px"'));
-} */
 </style>
 
 <style>
@@ -1042,6 +1014,7 @@ div.fuzzy-ui-table > .table-scroll::after {
 .fuzzy-ui-table:not(.fuzzy-ui-table-show-all) > .table-scroll > table > tbody > tr {
   contain: content;
   position: absolute;
+  width: 100%;
 }
 
 .fuzzy-ui-table > .table-scroll > table > tbody > tr.checked {

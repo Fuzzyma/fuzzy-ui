@@ -11,7 +11,7 @@
     <label v-else-if="col.options" class="fuzzy-ui-table-cell-select">
       <span v-if="col.prepend" class="fuzzy-ui-table-cell-prepend">{{ col.prepend }}</span>
       <span v-if="col.append" class="fuzzy-ui-table-cell-append">{{ col.append }}</span>
-      <select v-model="value" :disabled="!editable" v-bind="col.attrs" v-on="listeners">
+      <select v-model="value" :disabled="!editable" v-bind="extraAttrs" v-on="listeners">
         <option :value="undefined" disabled hidden v-text="col.attrs.placeholder ?? 'Please Select...'" />
         <option value="" disabled hidden v-text="col.attrs.placeholder ?? 'Please Select...'" />
         <option v-for="option in col.options" :key="option.value" :value="option.value" v-text="option.label" />
@@ -20,7 +20,7 @@
     <label v-else>
       <span v-if="col.prepend" class="fuzzy-ui-table-cell-prepend">{{ col.prepend }}</span>
       <span v-if="col.append" class="fuzzy-ui-table-cell-append">{{ col.append }}</span>
-      <input v-model="value" :disabled="!editable" v-bind="col.attrs" :type="type" v-on="listeners" />
+      <input v-model="value" :disabled="!editable" v-bind="extraAttrs" :type="type" v-on="listeners" />
     </label>
   </td>
 </template>
@@ -118,11 +118,11 @@ const listeners = computed(() => {
       if (e.key === 'Tab') return
       if (e.key === 'Enter' || e.key === 'ArrowDown') {
         e.preventDefault()
-        return setActiveCell(...getRowAndColIndex(), 'down')
+        return setActiveCell(...getRowAndColIndex(), 'down', props.row)
       }
       if (e.key === 'ArrowUp') {
         e.preventDefault()
-        return setActiveCell(...getRowAndColIndex(), 'up')
+        return setActiveCell(...getRowAndColIndex(), 'up', props.row)
       }
       // if (e.key === 'Tab') {
       //   e.preventDefault()
@@ -140,6 +140,10 @@ const listeners = computed(() => {
     },
     // dblclick: edit,
   }
+})
+
+const extraAttrs = computed(() => {
+  return { ...props.col.attrs, ...props.col.colAttrs?.(props.row, props.col) }
 })
 
 const CellSlot = () => {

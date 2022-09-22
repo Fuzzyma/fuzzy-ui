@@ -8,6 +8,7 @@ export type ColConfig = {
   attrs: Record<string, unknown>
   checkbox?: boolean
   class?: string | Array<any> | object
+  colAttrs?: (row: Row, col: ColConfig) => Record<string, unknown> | undefined
   editable?: boolean | ((row: Row) => boolean)
   filterable?: boolean
   fixed?: string | boolean
@@ -35,7 +36,7 @@ export const tableProvideKey = Symbol('fuzzy-ui-table') as InjectionKey<{
   isCheckedRow: (row: Row) => boolean
   maxOrderNum: Ref<number>
   registerCol: (colKey: string, config: ColConfig) => void
-  setActiveCell: (rowIndex: number, colIndex: number, direction: string) => void
+  setActiveCell: (rowIndex: number, colIndex: number, direction: string, row: Row) => void
   setCheckedRow: (row: Row, checked: boolean) => void
   setSort: (colKey: string, direction: 'asc' | 'desc' | undefined) => void
   unregisterCol: (colKey: string) => void

@@ -55,6 +55,9 @@ export default defineComponent({
     class: {
       type: [String, Array, Object],
     },
+    colAttrs: {
+      type: Function as PropType<ColConfig['colAttrs']>,
+    },
   },
   setup(props) {
     const { registerCol, isCheckedRow, unregisterCol, setCheckedRow, maxOrderNum } = inject(tableProvideKey)!

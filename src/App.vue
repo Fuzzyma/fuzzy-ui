@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import Button from './components/Button.vue'
 import Column from './components/Table/Column.vue'
 import Table from './components/Table/Table.vue'
+import { ColConfig, Row } from './components/Table/types'
 
 const generateRandomString = (minlen: number, maxlen: number) => {
   const len = Math.floor(Math.random() * (maxlen - minlen + 1)) + minlen
@@ -167,6 +168,14 @@ const animateScroll = () => {
     animationFrame = setTimeout(animateScroll, 30)
   }
 }
+
+const createDynamicAttrs = (row: Row, _col: ColConfig) => {
+  return {
+    style: {
+      color: row.age < 30 ? 'red' : 'blue',
+    },
+  }
+}
 </script>
 
 <template>
@@ -205,6 +214,7 @@ const animateScroll = () => {
           :hidden="!hides.includes('firstName')"
           fixed="left"
           width="100"
+          :col-attrs="createDynamicAttrs"
         ></Column>
         <Column
           header="Last Name"
