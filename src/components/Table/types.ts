@@ -12,7 +12,7 @@ export type ColConfig = {
   editable?: boolean | ((row: Row) => boolean)
   filterable?: boolean
   fixed?: string | boolean
-  getter: (row: Row, col?: ColConfig) => unknown
+  getter: (row: Row, col: ColConfig) => unknown
   getterOnEdit?: boolean
   hasCustomSetter: boolean
   header: string

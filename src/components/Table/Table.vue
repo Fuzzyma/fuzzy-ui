@@ -261,8 +261,8 @@ export default defineComponent({
         typeof col.sortable === 'function'
           ? col.sortable
           : (a: RowType, b: RowType) => {
-              const aVal = col.getter(a)
-              const bVal = col.getter(b)
+              const aVal = col.getter(a, col)
+              const bVal = col.getter(b, col)
               return `${aVal}`.localeCompare(`${bVal}`) * (currentSortDirection === 'asc' ? 1 : -1)
             }
       data.value.sort(sortFn)
