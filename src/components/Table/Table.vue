@@ -260,12 +260,15 @@ export default defineComponent({
       const sortFn =
         typeof col.sortable === 'function'
           ? col.sortable
-          : (a: RowType, b: RowType) => {
+          : (a: RowType, b: RowType, col: ColConfig) => {
               const aVal = col.getter(a, col)
               const bVal = col.getter(b, col)
-              return `${aVal}`.localeCompare(`${bVal}`) * (currentSortDirection === 'asc' ? 1 : -1)
+              return `${aVal}`.localeCompare(`${bVal}`)
             }
-      data.value.sort(sortFn)
+
+      const reverseIfNeeded = (a: RowType, b: RowType) =>
+        currentSortDirection === 'asc' ? sortFn(a, b, col) : sortFn(b, a, col)
+      data.value.sort(reverseIfNeeded)
     }
 
     const filter = (filterFn: (row: RowType) => boolean) => {

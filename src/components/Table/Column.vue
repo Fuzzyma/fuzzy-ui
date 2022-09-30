@@ -23,10 +23,7 @@ export default defineComponent({
     prop: { type: String },
     getter: { type: Function as PropType<ColConfig['getter']> },
     setter: { type: Function as PropType<ColConfig['setter']> },
-    sortable: {
-      type: Boolean,
-      default: false,
-    },
+    sortable: [Boolean, Function] as PropType<ColConfig['sortable']>,
     filterable: Boolean,
     editable: [Boolean, Function] as PropType<ColConfig['editable']>,
     checkbox: Boolean,

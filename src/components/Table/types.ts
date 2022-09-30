@@ -25,7 +25,7 @@ export type ColConfig = {
   setter: (row: Row, value: unknown) => void
   slots: Slots
   sortDirection?: 'asc' | 'desc'
-  sortable?: boolean
+  sortable?: boolean | ((rowA: Row, rowB: Row, col: ColConfig) => number)
   width?: string | number
 }
 
