@@ -106,7 +106,7 @@ const data = ref([
     state: 'NY',
     zip: 10001,
   },
-  ...sampleRows(20),
+  ...sampleRows(200),
 ])
 
 const hides = ref(['id', 'firstName', 'lastName'])
@@ -177,6 +177,10 @@ const createDynamicAttrs = (row: Row, _col: ColConfig) => {
   }
 }
 
+const disabled = (row: Row, col: ColConfig) => {
+  return row.age < 30
+}
+
 const updateField = (index: number, field: string, value: unknown) => {
   console.log('fooo')
   data.value[index][field] = value
@@ -237,7 +241,7 @@ const updateField = (index: number, field: string, value: unknown) => {
           :getter="row => Number(row.age).toFixed(4)"
           :order="Number(!switched)"
         ></Column>
-        <Column header="Address" sortable filterable editable></Column>
+        <Column header="Address" sortable filterable :editable="disabled"></Column>
         <Column header="City" sortable filterable editable></Column>
         <Column v-slot="{ row }" header="State" sortable filterable editable>
           <Button @click="changeCell(row)">Change Row Object</Button>

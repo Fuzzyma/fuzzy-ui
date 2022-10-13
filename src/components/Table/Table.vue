@@ -290,18 +290,49 @@ export default defineComponent({
       emit('selection-change', row, checked)
     }
 
-    const focusCell = (rowIndex: number, colIndex: number) => {
+    const focusCell = (rowIndex: number, colIndex: number, direction: -1 | 1) => {
       nextTick(() => {
         const i = ((rowIndex - 1 + numberOfRows.value) % numberOfRows.value) + 1
-        const el = scrollRef.value?.querySelector(
-          `table > tbody > tr:nth-child(${i}) > td:nth-child(${colIndex + 1}) input`
-        ) as HTMLInputElement
+
+        let el: HTMLInputElement
+        // Optimize for the forward case
+        if (direction === 1) {
+          el = scrollRef.value?.querySelector(
+            `table > tbody > tr:nth-child(${i}) > td:nth-child(n+${
+              colIndex + 1
+            }) :is(input,button,a,textarea,select):not([disabled])`
+          ) as HTMLInputElement
+        } else {
+          let els = scrollRef.value?.querySelectorAll(
+            `table > tbody > tr:nth-child(${i}) > td:nth-child(-n+${
+              colIndex + 1
+            }) :is(input,button,a,textarea,select):not([disabled])`
+            // eslint-disable-next-line no-undef
+          ) as NodeListOf<HTMLInputElement>
+          el = els[els.length - 1]
+        }
 
         el?.focus({ preventScroll: true })
       })
     }
 
+    const getNextRow = (row: RowType, change: number) => {
+      const index = filteredRows.value.indexOf(row)
+      const nextIndex = (index + change + data.value.length) % data.value.length
+      return filteredRows.value[nextIndex]
+    }
+
     const setActiveCell = (_rowIndex: number, colIndex: number, direction: string, row: RowType) => {
+      if (direction === 'left' && colIndex === 0) {
+        colIndex = sortedColumns.value.size
+        row = getNextRow(row, -1)
+      }
+
+      if (direction === 'right' && colIndex === sortedColumns.value.size - 1) {
+        colIndex = -1
+        row = getNextRow(row, 1)
+      }
+
       const index = filteredRows.value.indexOf(row)
       const nextRow = filteredRows.value[index + (direction === 'down' ? 1 : -1)]
       const rowIndex = rowKeys2.get(row) ?? 0
@@ -309,17 +340,17 @@ export default defineComponent({
       switch (direction) {
         case 'up':
           scrollRef.value?.scrollBy(0, -rowHeight.value)
-          focusCell(nextRowIndex, colIndex)
+          focusCell(nextRowIndex, colIndex, +1)
           break
         case 'down':
           scrollRef.value?.scrollBy(0, rowHeight.value)
-          focusCell(nextRowIndex, colIndex)
+          focusCell(nextRowIndex, colIndex, 1)
           break
         case 'left':
-          focusCell(rowIndex, colIndex - 1)
+          focusCell(rowIndex, colIndex - 1, -1)
           break
         case 'right':
-          focusCell(rowIndex, colIndex + 1)
+          focusCell(rowIndex, colIndex + 1, 1)
           break
       }
     }

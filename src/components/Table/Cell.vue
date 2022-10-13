@@ -115,23 +115,25 @@ const listeners = computed(() => {
     },
     change: save,
     keydown: (e: KeyboardEvent) => {
-      if (e.key === 'Tab') return
+      if (e.key === 'ArrowUp' || (e.key === 'Enter' && e.shiftKey)) {
+        e.preventDefault()
+        return setActiveCell(...getRowAndColIndex(), 'up', props.row)
+      }
+
       if (e.key === 'Enter' || e.key === 'ArrowDown') {
         e.preventDefault()
         return setActiveCell(...getRowAndColIndex(), 'down', props.row)
       }
-      if (e.key === 'ArrowUp') {
+
+      if (e.key === 'Tab') {
         e.preventDefault()
-        return setActiveCell(...getRowAndColIndex(), 'up', props.row)
+        if (e.shiftKey) {
+          return setActiveCell(...getRowAndColIndex(), 'left', props.row)
+        } else {
+          return setActiveCell(...getRowAndColIndex(), 'right', props.row)
+        }
       }
-      // if (e.key === 'Tab') {
-      //   e.preventDefault()
-      //   if (e.shiftKey) {
-      //     return setActiveCell(...getRowAndColIndex(), 'left')
-      //   } else {
-      //     return setActiveCell(...getRowAndColIndex(), 'right')
-      //   }
-      // }
+
       if (e.key === 'Escape') {
         e.preventDefault()
         value.value = String(props.col.getter(props.row, props.col))
