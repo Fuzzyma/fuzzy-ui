@@ -110,7 +110,7 @@ export default defineComponent({
     const scrollRef = ref<HTMLDivElement>()
     const styleRef = ref<HTMLStyleElement>()
 
-    const data = ref(props.data)
+    const data = ref(props.data.slice())
     const columns = ref(new Map<string, ColConfig>())
     const maxOrderNum = ref(0)
     const checkedRows = ref(new Set<RowType>())
@@ -302,15 +302,18 @@ export default defineComponent({
     }
 
     const setActiveCell = (_rowIndex: number, colIndex: number, direction: string, row: RowType) => {
+      const index = filteredRows.value.indexOf(row)
+      const nextRow = filteredRows.value[index + (direction === 'down' ? 1 : -1)]
       const rowIndex = rowKeys2.get(row) ?? 0
+      const nextRowIndex = rowKeys2.get(nextRow) ?? 0
       switch (direction) {
         case 'up':
           scrollRef.value?.scrollBy(0, -rowHeight.value)
-          focusCell(rowIndex - 1, colIndex)
+          focusCell(nextRowIndex, colIndex)
           break
         case 'down':
           scrollRef.value?.scrollBy(0, rowHeight.value)
-          focusCell(rowIndex + 1, colIndex)
+          focusCell(nextRowIndex, colIndex)
           break
         case 'left':
           focusCell(rowIndex, colIndex - 1)

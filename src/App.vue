@@ -106,7 +106,7 @@ const data = ref([
     state: 'NY',
     zip: 10001,
   },
-  ...sampleRows(1000),
+  ...sampleRows(20),
 ])
 
 const hides = ref(['id', 'firstName', 'lastName'])
@@ -176,6 +176,11 @@ const createDynamicAttrs = (row: Row, _col: ColConfig) => {
     },
   }
 }
+
+const updateField = (index: number, field: string, value: unknown) => {
+  console.log('fooo')
+  data.value[index][field] = value
+}
 </script>
 
 <template>
@@ -204,6 +209,7 @@ const createDynamicAttrs = (row: Row, _col: ColConfig) => {
           border: 1px solid black;
           box-sizing: border-box;
         "
+        @update-field="updateField"
       >
         <Column checkbox fixed width="35"></Column>
         <Column header="Id" prop="id" :hidden="!hides.includes('id')" fixed width="100" sortable editable></Column>
@@ -245,7 +251,7 @@ const createDynamicAttrs = (row: Row, _col: ColConfig) => {
         <Column header="Website" sortable filterable editable></Column>
         <Column header="Company" sortable filterable editable></Column>
         <Column header="Company Address" sortable filterable editable></Column>
-        <Column header="Company City" sortable filterable editable></Column>
+        <!-- <Column header="Company City" sortable filterable editable></Column>
         <Column header="Company State" sortable filterable editable></Column>
         <Column header="Company Zip" sortable filterable editable></Column>
         <Column header="Company Country" sortable filterable editable></Column>
@@ -268,7 +274,7 @@ const createDynamicAttrs = (row: Row, _col: ColConfig) => {
         <Column header="Company Wechat" sortable filterable editable></Column>
         <Column header="Actions" sortable filterable editable width="200" fixed="right">
           <Button @click="doSomething()">Add Row</Button>
-        </Column>
+        </Column> -->
       </Table>
     </div>
   </div>
