@@ -68,7 +68,7 @@ import {
   mergeProps,
 } from 'vue'
 
-export default defineComponent({
+const Comp = defineComponent({
   props: {
     data: {
       type: Array as PropType<Data>,
@@ -116,6 +116,7 @@ export default defineComponent({
     const checkedRows = ref(new Set<RowType>())
     const rowKeys = ref(new Map<RowType, string>())
     const filteredRowsSet = ref(new Set<RowType>(data.value))
+    const refs = ref(new Map<RowType, InstanceType<typeof Row>>())
 
     const numberOfRows = ref(props.showAll ? Infinity : 0)
     const currentRow = ref(Infinity)
@@ -263,6 +264,11 @@ export default defineComponent({
           : (a: RowType, b: RowType, col: ColConfig) => {
               const aVal = col.getter(a, col)
               const bVal = col.getter(b, col)
+
+              if (typeof aVal === 'number' && typeof bVal === 'number') {
+                return aVal - bVal
+              }
+
               return `${aVal}`.localeCompare(`${bVal}`)
             }
 
@@ -290,69 +296,58 @@ export default defineComponent({
       emit('selection-change', row, checked)
     }
 
-    const focusCell = (rowIndex: number, colIndex: number, direction: -1 | 1) => {
-      nextTick(() => {
-        const i = ((rowIndex - 1 + numberOfRows.value) % numberOfRows.value) + 1
+    let idle: Promise<void> | null = null
+    let promiseResolve: () => void
 
-        let el: HTMLInputElement
-        // Optimize for the forward case
-        if (direction === 1) {
-          el = scrollRef.value?.querySelector(
-            `table > tbody > tr:nth-child(${i}) > td:nth-child(n+${
-              colIndex + 1
-            }) :is(input,button,a,textarea,select):not([disabled])`
-          ) as HTMLInputElement
-        } else {
-          let els = scrollRef.value?.querySelectorAll(
-            `table > tbody > tr:nth-child(${i}) > td:nth-child(-n+${
-              colIndex + 1
-            }) :is(input,button,a,textarea,select):not([disabled])`
-            // eslint-disable-next-line no-undef
-          ) as NodeListOf<HTMLInputElement>
-          el = els[els.length - 1]
-        }
+    const setActiveCell = async (x: number, [dx, dy]: [dx: number, dy: number], row: RowType) => {
+      if (idle) return
 
-        el?.focus({ preventScroll: true })
-      })
-    }
-
-    const getNextRow = (row: RowType, change: number) => {
-      const index = filteredRows.value.indexOf(row)
-      const nextIndex = (index + change + data.value.length) % data.value.length
-      return filteredRows.value[nextIndex]
-    }
-
-    const setActiveCell = (_rowIndex: number, colIndex: number, direction: string, row: RowType) => {
-      if (direction === 'left' && colIndex === 0) {
-        colIndex = sortedColumns.value.size
-        row = getNextRow(row, -1)
+      // Reached left most cell => go one row up
+      if (x + dx < 0) {
+        x = sortedColumns.value.size - 1
+        dy = -1
+        dx = 0
       }
 
-      if (direction === 'right' && colIndex === sortedColumns.value.size - 1) {
-        colIndex = -1
-        row = getNextRow(row, 1)
+      // Reached right most cell => go one row down
+      if (x + dx > sortedColumns.value.size - 1) {
+        x = 0
+        dx = 0
+        dy = 1
       }
 
-      const index = filteredRows.value.indexOf(row)
-      const nextRow = filteredRows.value[index + (direction === 'down' ? 1 : -1)]
-      const rowIndex = rowKeys2.get(row) ?? 0
-      const nextRowIndex = rowKeys2.get(nextRow) ?? 0
-      switch (direction) {
-        case 'up':
+      const y = filteredRows.value.indexOf(row)
+      const nextRow = filteredRows.value[y + dy]
+
+      // Reached top or bottom => do nothing
+      if (!nextRow) {
+        return
+      }
+
+      // Scroll one row if we reached the top or bottom of the table (buffer of 3 rows)
+      if (dy < 0 && currentRows.value.indexOf(nextRow) < 2) {
+        if (scrollRef.value?.scrollTop) {
           scrollRef.value?.scrollBy(0, -rowHeight.value)
-          focusCell(nextRowIndex, colIndex, +1)
-          break
-        case 'down':
+          idle = new Promise(resolve => {
+            promiseResolve = resolve
+          })
+        }
+      } else if (dy > 0 && currentRows.value.indexOf(nextRow) > currentRows.value.length - 4) {
+        if (y < filteredRows.value.length - 3) {
           scrollRef.value?.scrollBy(0, rowHeight.value)
-          focusCell(nextRowIndex, colIndex, 1)
-          break
-        case 'left':
-          focusCell(rowIndex, colIndex - 1, -1)
-          break
-        case 'right':
-          focusCell(rowIndex, colIndex + 1, 1)
-          break
+          idle = new Promise(resolve => {
+            promiseResolve = resolve
+          })
+        }
       }
+
+      idle?.then(() => {
+        refs.value.get(nextRow)?.focusCell(x, dx)
+        idle = null
+      }) ?? refs.value.get(nextRow)?.focusCell(x, dx)
+      // nextTick().then(() => {
+      //   promiseResolve?.()
+      // })
     }
 
     const featurePartialRows = true
@@ -362,22 +357,28 @@ export default defineComponent({
 
       const { scrollTop, scrollHeight, clientHeight } = wrapper
 
-      const newCurrentRow = Math.floor(scrollTop / rowHeight.value)
+      let newCurrentRow = Math.floor(scrollTop / rowHeight.value)
+
+      // This is a hack to show the last row in chrome
+      if (scrollTop === scrollHeight - clientHeight) {
+        newCurrentRow = filteredRows.value.length - numberOfRows.value
+      }
 
       if (newCurrentRow !== currentRow.value) {
         currentRow.value = newCurrentRow
-        currentRows.value = filteredRows.value.slice(currentRow.value, currentRow.value + numberOfRows.value)
+        currentRows.value = filteredRows.value.slice(currentRow.value, currentRow.value + numberOfRows.value + 1)
       }
 
       // Hidden behind feature flag because it is a real performance killer
       if (featurePartialRows) {
         const fraction = scrollTop % rowHeight.value
         if (fraction !== partialRow.value) {
-          if (scrollTop === scrollHeight - clientHeight) {
-            partialRow.value = 0
-          } else {
-            partialRow.value = ~~fraction
-          }
+          // if (scrollTop === scrollHeight - clientHeight) {
+          //   partialRow.value = 0
+          // } else {
+          // console.log(scrollTop, scrollHeight, clientHeight, scrollHeight - clientHeight)
+          partialRow.value = ~~fraction
+          // }
         }
       }
     }
@@ -399,13 +400,9 @@ export default defineComponent({
 
     // let scrollAnimationFrame: number
     const onScroll = () => {
-      // cancelAnimationFrame(scrollAnimationFrame)
-      // scrollAnimationFrame = requestAnimationFrame(() => {
-      //   updateShadowVisibility(scrollRef.value!)
-      //   updateCurrentRow()
-      // })
       updateShadowVisibility(scrollRef.value!)
       updateCurrentRow()
+      promiseResolve?.()
     }
 
     watch(
@@ -558,13 +555,11 @@ export default defineComponent({
       rowHeight.value = eval(replaceEm)
 
       const thRowHeight = parseInt(window.getComputedStyle(wrapper).getPropertyValue('--fuzzy-ui-table-header-height'))
-      numberOfRows.value = props.showAll
-        ? Infinity
-        : Math.ceil((wrapper.clientHeight - thRowHeight) / rowHeight.value) + 1
+      numberOfRows.value = props.showAll ? Infinity : Math.ceil((wrapper.clientHeight - thRowHeight) / rowHeight.value)
 
       updateCurrentRow()
 
-      wrapper.addEventListener('scroll', onScroll)
+      wrapper.addEventListener('scroll', onScroll, { passive: true })
     })
 
     onBeforeUnmount(() => scrollRef.value!.removeEventListener('scroll', onScroll))
@@ -614,10 +609,11 @@ export default defineComponent({
 
     let lastNumberOfRows = 0
     let lastCurrentRow = 0
+    let oldMax = 0
 
     const getRowNodes = () => {
       const height = rowHeight.value
-      const newRows = filteredRows.value.slice(currentRow.value, currentRow.value + numberOfRows.value)
+      const newRows = filteredRows.value.slice(currentRow.value, currentRow.value + numberOfRows.value + 1)
 
       if (props.showAll) {
         return renderList(newRows, (data, key) => {
@@ -637,7 +633,7 @@ export default defineComponent({
         })
       }
 
-      const lastRows = filteredRows.value.slice(lastCurrentRow, lastCurrentRow + lastNumberOfRows)
+      const lastRows = filteredRows.value.slice(lastCurrentRow, lastCurrentRow + lastNumberOfRows + 1)
 
       lastCurrentRow = currentRow.value
       lastNumberOfRows = numberOfRows.value
@@ -664,7 +660,7 @@ export default defineComponent({
           let key = rowKeys2.get(row)
 
           if (!key) {
-            key = freed.shift() || rowKeys2.size + 1
+            key = freed.shift() || (oldMax = Math.max(rowKeys2.size, oldMax + 1))
             rowKeys2.set(row, key)
           }
 
@@ -674,6 +670,7 @@ export default defineComponent({
 
           return {
             key,
+            ref: (el: InstanceType<typeof Row>) => refs.value.set(row, el),
             // style: { top: i * height - partialRow.value + 'px' },
             // style: 'top:' + (i * height - partialRow.value) + 'px',
             style: { transform: 'translateY(' + (i * height - fraction) + 'px)' },
@@ -684,7 +681,7 @@ export default defineComponent({
         .sort((a, b) => a.key - b.key)
 
       // return renderList(rowNodes, ({ key, style, data }) => h(Row, { key, data, style }))
-      return renderList(rowNodes, ({ key, style, data }) => {
+      return renderList(rowNodes, ({ key, style, data, ref }) => {
         return (
           openBlock(),
           createBlock(
@@ -693,6 +690,7 @@ export default defineComponent({
               key,
               data,
               style,
+              ref,
             },
             null,
             8,
@@ -816,6 +814,16 @@ export default defineComponent({
     }
   },
 })
+
+export default Comp as typeof Comp & {
+  new (...args: any): {
+    filter: (filterFn: (row: RowType) => boolean) => void
+    filteredRows: RowType[]
+    resetFilter: () => void
+    scrollRef: HTMLDivElement
+    selected: RowType[]
+  }
+}
 
 // TODO:
 // - Resize observer to calculate new height of container and hide/show shadow

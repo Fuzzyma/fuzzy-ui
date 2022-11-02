@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, PropType, ref, Slot, watch, nextTick } from 'vue'
+import { computed, inject, PropType, ref, Slot, watch, nextTick, FunctionalComponent } from 'vue'
 import { ColConfig, tableProvideKey } from './types'
 import { useLogHooks } from './useLogHooks'
 
@@ -48,7 +48,7 @@ useLogHooks('cell')
 
 const { setActiveCell, setCheckedRow, updateField } = inject(tableProvideKey)!
 
-const value = ref(props.col.getter(props.row, props.col))
+const value = ref(props.col.format(props.col.getter(props.row, props.col)))
 
 const type = ref(props.col.attrs.type === 'number' ? 'text' : (props.col.attrs.type as string))
 
@@ -63,7 +63,7 @@ const editable = computed(() => {
 })
 
 watch(
-  () => props.col.getter(props.row, props.col),
+  () => props.col.format(props.col.getter(props.row, props.col)),
   val => {
     value.value = val
   }
@@ -91,12 +91,6 @@ defineExpose({ edit, save })
 
 const tdRef = ref<HTMLTableCellElement>()
 
-const getRowAndColIndex = () => {
-  const index = tdRef.value!.cellIndex
-  const rowIndex = (tdRef.value?.parentElement as HTMLTableRowElement).rowIndex
-  return [rowIndex, index] as const
-}
-
 const listeners = computed(() => {
   if (!editable.value) return {}
 
@@ -110,33 +104,33 @@ const listeners = computed(() => {
     blur: () => {
       type.value = props.col.attrs.type === 'number' ? 'text' : (props.col.attrs.type as string)
       nextTick().then(() => {
-        value.value = props.col.getter(props.row, props.col)
+        value.value = props.col.format(props.col.getter(props.row, props.col))
       })
     },
     change: save,
     keydown: (e: KeyboardEvent) => {
       if (e.key === 'ArrowUp' || (e.key === 'Enter' && e.shiftKey)) {
         e.preventDefault()
-        return setActiveCell(...getRowAndColIndex(), 'up', props.row)
+        return setActiveCell(tdRef.value!.cellIndex, [0, -1], props.row)
       }
 
       if (e.key === 'Enter' || e.key === 'ArrowDown') {
         e.preventDefault()
-        return setActiveCell(...getRowAndColIndex(), 'down', props.row)
+        return setActiveCell(tdRef.value!.cellIndex, [0, 1], props.row)
       }
 
       if (e.key === 'Tab') {
         e.preventDefault()
         if (e.shiftKey) {
-          return setActiveCell(...getRowAndColIndex(), 'left', props.row)
+          return setActiveCell(tdRef.value!.cellIndex, [-1, 0], props.row)
         } else {
-          return setActiveCell(...getRowAndColIndex(), 'right', props.row)
+          return setActiveCell(tdRef.value!.cellIndex, [1, 0], props.row)
         }
       }
 
       if (e.key === 'Escape') {
         e.preventDefault()
-        value.value = String(props.col.getter(props.row, props.col))
+        value.value = props.col.format(props.col.getter(props.row, props.col))
         return
       }
     },
@@ -148,7 +142,7 @@ const extraAttrs = computed(() => {
   return { ...props.col.attrs, ...props.col.colAttrs?.(props.row, props.col) }
 })
 
-const CellSlot = () => {
+const CellSlot: FunctionalComponent = () => {
   return props.col.slots.default?.({
     valueRef: value,
     row: props.row,

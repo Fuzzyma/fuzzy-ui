@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { Ref, ref } from 'vue'
 import Button from './components/Button.vue'
 import Column from './components/Table/Column.vue'
 import Table from './components/Table/Table.vue'
-import { ColConfig, Row } from './components/Table/types'
 
 const generateRandomString = (minlen: number, maxlen: number) => {
   const len = Math.floor(Math.random() * (maxlen - minlen + 1)) + minlen
@@ -84,12 +83,24 @@ const sampleRows = (number: number) => {
   return Array.from({ length: number }, createSampleRow)
 }
 
-const data = ref([
+type DataType = {
+  address: string
+  age: number
+  city: string
+  country: string
+  firstName: string
+  id: string
+  lastName: string
+  state: string
+  zip: number
+}
+
+const data: Ref<DataType[]> = ref<DataType[]>([
   {
     id: Math.random().toString(36).slice(-6),
     firstName: 'John',
     lastName: 'Doe',
-    country: '',
+    country: 'DE',
     age: 30,
     address: '555 Main St',
     city: 'New York',
@@ -105,15 +116,16 @@ const data = ref([
     city: 'New York',
     state: 'NY',
     zip: 10001,
+    country: 'EN',
   },
   ...sampleRows(200),
 ])
 
 const hides = ref(['id', 'firstName', 'lastName'])
 
-const doSomething = () => {
-  data.value.push(createSampleRow(0, 0))
-}
+// const doSomething = () => {
+//   data.value.push(createSampleRow(0, 0))
+// }
 const header = ref('First Name')
 const changeHeader = () => {
   header.value = 'First Name 2'
@@ -169,7 +181,7 @@ const animateScroll = () => {
   }
 }
 
-const createDynamicAttrs = (row: Row, _col: ColConfig) => {
+const createDynamicAttrs = (row: DataType) => {
   return {
     style: {
       color: row.age < 30 ? 'red' : 'blue',
@@ -177,13 +189,13 @@ const createDynamicAttrs = (row: Row, _col: ColConfig) => {
   }
 }
 
-const disabled = (row: Row, col: ColConfig) => {
+const disabled = (row: DataType) => {
   return row.age < 30
 }
 
-const updateField = (index: number, field: string, value: unknown) => {
+const updateField = (index: number, field: keyof DataType, value: any) => {
   console.log('fooo')
-  data.value[index][field] = value
+  ;(data.value[index][field] as any) = value
 }
 </script>
 
@@ -241,6 +253,7 @@ const updateField = (index: number, field: string, value: unknown) => {
           :getter="row => Number(row.age).toFixed(4)"
           :order="Number(!switched)"
         ></Column>
+        <Column header="Age" sortable filterable editable></Column>
         <Column header="Address" sortable filterable :editable="disabled"></Column>
         <Column header="City" sortable filterable editable></Column>
         <Column v-slot="{ row }" header="State" sortable filterable editable>

@@ -1,6 +1,6 @@
 import { ComputedRef, InjectionKey, Ref, Slots, WritableComputedRef } from 'vue'
 
-export type UpdateFnType = (index: number, field: string, value: unknown) => any | Promise<any>
+export type UpdateFnType = (index: number, field: any, value: any) => any | Promise<any>
 export type Row = Record<string, unknown>
 export type Data = Row[]
 export type ColConfig = {
@@ -8,11 +8,12 @@ export type ColConfig = {
   attrs: Record<string, unknown>
   checkbox?: boolean
   class?: string | Array<any> | object
-  colAttrs?: (row: Row, col: ColConfig) => Record<string, unknown> | undefined
-  editable?: boolean | ((row: Row) => boolean)
+  colAttrs?: (row: any, col: ColConfig) => Record<string, unknown> | undefined
+  editable?: boolean | ((row: any) => boolean)
   filterable?: boolean
   fixed?: string | boolean
-  getter: (row: Row, col: ColConfig) => unknown
+  format: (value: any) => unknown
+  getter: (row: any, col: ColConfig) => unknown
   getterOnEdit?: boolean
   hasCustomSetter: boolean
   header: string
@@ -22,10 +23,10 @@ export type ColConfig = {
   order: number
   prepend?: string
   prop: string
-  setter: (row: Row, value: unknown) => void
+  setter: (row: any, value: unknown) => void
   slots: Slots
   sortDirection?: 'asc' | 'desc'
-  sortable?: boolean | ((rowA: Row, rowB: Row, col: ColConfig) => number)
+  sortable?: boolean | ((rowA: any, rowB: any, col: ColConfig) => number)
   width?: string | number
 }
 
@@ -36,7 +37,7 @@ export const tableProvideKey = Symbol('fuzzy-ui-table') as InjectionKey<{
   isCheckedRow: (row: Row) => boolean
   maxOrderNum: Ref<number>
   registerCol: (colKey: string, config: ColConfig) => void
-  setActiveCell: (rowIndex: number, colIndex: number, direction: string, row: Row) => void
+  setActiveCell: (x: number, direction: [dx: number, dy: number], row: Row) => void
   setCheckedRow: (row: Row, checked: boolean) => void
   setSort: (colKey: string, direction: 'asc' | 'desc' | undefined) => void
   unregisterCol: (colKey: string) => void
