@@ -1,6 +1,12 @@
 import { ComputedRef, InjectionKey, Ref, Slots, WritableComputedRef } from 'vue'
 
-export type UpdateFnType = (index: number, field: any, value: any) => any | Promise<any>
+export type UpdateFnType = (
+  index: number,
+  field: any,
+  value: any,
+  data: Ref<Row[]>,
+  dataIndex: number
+) => any | Promise<any>
 export type Row = Record<string, unknown>
 export type Data = Row[]
 export type ColConfig = {

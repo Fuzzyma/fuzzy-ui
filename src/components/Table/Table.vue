@@ -39,7 +39,9 @@ import {
   onMounted,
   PropType,
   provide,
+  Ref,
   ref,
+  toRaw,
   useAttrs,
   useSlots,
   watch,
@@ -78,7 +80,9 @@ const Comp = defineComponent({
       type: Function as PropType<(data: Data) => any | Promise<any>>,
     },
     onUpdateRow: {
-      type: Function as PropType<(data: RowType, index: number) => any | Promise<any>>,
+      type: Function as PropType<
+        (row: RowType, index: number, data: Ref<RowType[]>, dataIndex: number) => any | Promise<any>
+      >,
     },
     onUpdateField: {
       type: Function as PropType<UpdateFnType>,
@@ -190,15 +194,17 @@ const Comp = defineComponent({
         }
 
         const field = col.prop
-        const index = props.data.indexOf(row)
+
+        const index = toRaw(props.data).indexOf(toRaw(row))
+        const dataIndex = data.value.indexOf(row)
 
         if (props.onUpdateField) {
-          return await props.onUpdateField?.(index, field, value)
+          return await props.onUpdateField?.(index, field, value, data, dataIndex)
         }
 
         if (props.onUpdateRow) {
           const r = { ...row, [field]: value }
-          return await props.onUpdateRow(r, index)
+          return await props.onUpdateRow(r, index, data, dataIndex)
         }
 
         if (props['onUpdate:data']) {
@@ -421,7 +427,7 @@ const Comp = defineComponent({
       () => props.data,
       () => {
         console.log('Data watcher triggered')
-        data.value = props.data
+        data.value = props.data.slice()
       }
     )
 
