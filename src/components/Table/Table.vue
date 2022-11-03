@@ -195,7 +195,7 @@ const Comp = defineComponent({
 
         const field = col.prop
 
-        const index = toRaw(props.data).indexOf(toRaw(row))
+        const index = toRaw(props.data).map(toRaw).indexOf(toRaw(row))
         const dataIndex = data.value.indexOf(row)
 
         if (props.onUpdateField) {
