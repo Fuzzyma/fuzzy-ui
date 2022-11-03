@@ -339,7 +339,7 @@ const Comp = defineComponent({
           })
         }
       } else if (dy > 0 && currentRows.value.indexOf(nextRow) > currentRows.value.length - 4) {
-        if (y < filteredRows.value.length - 3) {
+        if (y < filteredRows.value.length - 3 && scrollRef.value?.scrollHeight !== scrollRef.value?.clientHeight) {
           scrollRef.value?.scrollBy(0, rowHeight.value)
           idle = new Promise(resolve => {
             promiseResolve = resolve
