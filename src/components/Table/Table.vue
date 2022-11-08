@@ -367,7 +367,7 @@ const Comp = defineComponent({
 
       // This is a hack to show the last row in chrome
       if (scrollTop === scrollHeight - clientHeight) {
-        newCurrentRow = filteredRows.value.length - numberOfRows.value
+        newCurrentRow = Math.max(0, filteredRows.value.length - numberOfRows.value)
       }
 
       if (newCurrentRow !== currentRow.value) {
