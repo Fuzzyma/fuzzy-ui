@@ -413,11 +413,16 @@ const Comp = defineComponent({
 
     watch(
       () => [...data.value],
-      data => {
+      (data, oldData) => {
         data.forEach(d => {
           if (rowKeys.value.has(d)) return
           rowKeys.value.set(d, Math.random().toString())
           filteredRowsSet.value.add(d)
+        })
+        oldData?.forEach(d => {
+          if (data.includes(d)) return
+          rowKeys.value.delete(d)
+          checkedRows.value.delete(d)
         })
       },
       { immediate: true }
