@@ -433,6 +433,7 @@ const Comp = defineComponent({
       () => {
         console.log('Data watcher triggered')
         data.value = props.data.slice()
+        currentSortKey && setSort(currentSortKey, currentSortDirection)
       }
     )
 
