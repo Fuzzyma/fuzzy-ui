@@ -142,7 +142,16 @@ const statusOptions = [
     <FUIColumn header="Age" sortable editable width="200" />
     <FUIColumn header="Email" sortable editable width="200" />
     <FUIColumn header="Phone" sortable editable width="200" />
-    <FUIColumn header="Date of Birth" sortable editable type="date" :getter="toDate" :setter="fromDate" getter-on-edit  width="200" />
+    <FUIColumn
+      header="Date of Birth"
+      sortable
+      editable
+      type="date"
+      :getter="toDate"
+      :setter="fromDate"
+      getter-on-edit
+      width="200"
+    />
     <FUIColumn header="Status" fixed="right" :options="statusOptions" editable width="200" />
   </FUITable>
 </template>
@@ -156,7 +165,7 @@ const toDate = row => {
 }
 
 const fromDate = (row, value) => {
-  return row.dateOfBirth = value.split('-').reverse().join('.')
+  return (row.dateOfBirth = value.split('-').reverse().join('.'))
 }
 
 const data = ref([
@@ -183,7 +192,7 @@ const data = ref([
     phone: '+49 987654321',
     dateOfBirth: '03.05.2012',
     status: '', // show placeholder
-  }
+  },
 ])
 
 const statusOptions = [
@@ -207,3 +216,37 @@ const statusOptions = [
   <FUIColumn header="Date of Birth" sortable editable type="date" :getter="toDate" :setter="fromDate" getter-on-edit  width="200" />
   <FUIColumn header="Status" fixed="right" :options="statusOptions" editable width="200" />
 </FUITable>
+
+## useMountOutsidec()
+
+On some occasions you want to mount an element outside of the usual Vue app. This is useful for example when you want to open a modal programatically without the need to put it in the template and use Teleport.
+
+`useMountOutsidec()` gives you the ability to do so.
+It returns an function that mounts the specified component and returns an object with the `component` and an `unmount` function.
+
+`useMountOutside` takes 2 additional optional arguments:
+
+- `props` - an object with props that will be passed to the component
+- `children` - an array of children that will be passed to the component
+
+The mounting function can take an additional argument which will be passed to the component as additional props.
+
+```vue
+<template>
+  <div>
+    <button @click="openModal">Open Modal</button>
+  </div>
+</template>
+
+<script setup>
+import { useMountOutsidec } from '../src/index'
+import Modal from './Modal.vue'
+
+const mountComponent = useMountOutsidec(Modal, props, children)
+
+const openModal = () => {
+  const { component, unmoun } = mountComponent(extraProps)
+  // do something with the component
+}
+</script>
+```
