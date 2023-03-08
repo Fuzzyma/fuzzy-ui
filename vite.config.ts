@@ -33,7 +33,7 @@ export default defineConfig({
   //     entry: path.resolve('src/index.ts'),
   //     name: 'FuzzyUI',
   //     // fileName: (format) => `my-lib.${format}.js`
-  //     formats: ['es'],
+  //     formats: ['umd'],
   //   },
   //   rollupOptions: {
   //     // input: entries,
@@ -47,13 +47,14 @@ export default defineConfig({
   //       globals: {
   //         vue: 'Vue',
   //       },
+  //       name: 'FuzzyUI',
   //       // preserveModules: true,
   //       // entryFileNames: ({ name: fileName }) => {
   //       //   return `${fileName}.js`
   //       // },
-  //       preserveModules: true,
+  //       // preserveModules: true,
   //       entryFileNames: '[name].js',
-  //       format: 'es',
+  //       format: 'umd',
   //     },
   //   },
   // },

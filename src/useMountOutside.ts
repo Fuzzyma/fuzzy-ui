@@ -26,7 +26,7 @@ export type ComponentFactory = <T extends new (...args: any) => any>(
 
 type UseMountOutside = <T extends new (...args: any) => any>(
   component: T,
-  props?: Record<string, unknown> | null,
+  props?: Record<string, unknown> | null | (() => Record<string, unknown> | null),
   children?: VNodeChild | Slot | Slots
 ) => {
   component: InstanceType<T>
@@ -56,7 +56,7 @@ const useMountOutsideFactory = (app: App, { container }: PluginOptions = {}) => 
 
   const useMountOutside: UseMountOutside = (component, props?, children?) => {
     const sideRoot = h({
-      render: () => h(component as any, props, children as any),
+      render: () => h(component as any, typeof props === 'function' ? props() : props, children as any),
     })
 
     sideRoot.appContext = app._context
