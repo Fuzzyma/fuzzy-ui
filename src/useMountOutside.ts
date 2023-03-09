@@ -22,7 +22,7 @@ export type ComponentFactory = <T extends new (...args: any) => any>(
   component: T,
   props?: Record<string, unknown> | null,
   children?: VNodeChild | Slot | Slots
-) => (extraProps?: Record<string, unknown> | null) => InstanceType<T>
+) => (extraProps?: any) => InstanceType<T>
 
 type UseMountOutside = <T extends new (...args: any) => any>(
   component: T,
