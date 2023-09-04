@@ -228,7 +228,18 @@ const updateField = (index: number, field: keyof DataType, value: any) => {
         @update-field="updateField"
       >
         <Column checkbox fixed width="35"></Column>
-        <Column header="Id" prop="id" :hidden="!hides.includes('id')" fixed width="100" sortable editable></Column>
+
+        <Column
+          :cell-attrs="(r, c) => ({ 'data-label': c.header })"
+          header="Id"
+          prop="id"
+          :hidden="!hides.includes('id')"
+          fixed
+          width="100"
+          sortable
+          editable
+        >
+        </Column>
         <Column header="Num" prop="num" fixed width="100" sortable editable></Column>
         <Column
           :header="header"
@@ -238,13 +249,8 @@ const updateField = (index: number, field: keyof DataType, value: any) => {
           width="100"
           :col-attrs="createDynamicAttrs"
         ></Column>
-        <Column
-          header="Last Name"
-          :hidden="!hides.includes('lastName')"
-          sortable
-          :order="Number(switched)"
-          width="100"
-        ></Column>
+        <Column header="Last Name" :hidden="!hides.includes('lastName')" sortable :order="Number(switched)" width="100">
+        </Column>
         <Column
           header="Age"
           sortable

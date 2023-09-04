@@ -55,6 +55,9 @@ export default defineComponent({
     colAttrs: {
       type: Function as PropType<ColConfig['colAttrs']>,
     },
+    cellAttrs: {
+      type: Object as PropType<ColConfig['cellAttrs']>,
+    },
     headerAttrs: {
       type: Object as PropType<ColConfig['headerAttrs']>,
     },
