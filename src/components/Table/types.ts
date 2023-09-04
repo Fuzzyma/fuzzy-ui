@@ -12,9 +12,10 @@ export type Data = Row[]
 export type ColConfig = {
   append?: string
   attrs: Record<string, unknown>
+  cellAttrs?: (row: any, col: ColConfig) => Record<string, unknown> | undefined
   checkbox?: boolean
-  class?: string | Array<any> | object
   colAttrs?: (row: any, col: ColConfig) => Record<string, unknown> | undefined
+  class?: string | Array<any> | object
   editable?: boolean | ((row: any) => boolean)
   filterable?: boolean
   fixed?: string | boolean
