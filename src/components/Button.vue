@@ -126,7 +126,7 @@ const handleClick = async (ev: MouseEvent) => {
   --fuzzy-ui-button-font-size: 1em;
 }
 
-.fuzzy-ui-button {
+:where(.fuzzy-ui-button) {
   display: inline-flex;
   position: relative;
   align-items: center;
@@ -135,22 +135,22 @@ const handleClick = async (ev: MouseEvent) => {
   max-width: 100%;
 }
 
-.fuzzy-ui-button.loading {
+:where(.fuzzy-ui-button.loading) {
   pointer-events: none;
 }
 
-.fuzzy-ui-button.squared {
+:where(.fuzzy-ui-button.squared) {
   aspect-ratio: 1;
 }
 
-.fuzzy-ui-button__content {
+:where(.fuzzy-ui-button__content) {
   text-overflow: ellipsis;
   overflow: hidden;
   /* transition: opacity 0.25s ease-in-out; */
   transition: background-color 0.1s ease-in-out, color 0.1s ease-in-out;
 }
 
-.fuzzy-ui-button__content:not(.hasSlot) {
+:where(.fuzzy-ui-button__content:not(.hasSlot)) {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -159,20 +159,20 @@ const handleClick = async (ev: MouseEvent) => {
   max-width: 100%;
 }
 
-.fuzzy-ui-button__content.iconRight {
+:where(.fuzzy-ui-button__content.iconRight) {
   flex-direction: row-reverse;
 }
 
-.fuzzy-ui-button__content.loading {
+:where(.fuzzy-ui-button__content.loading) {
   opacity: 0;
 }
 
-.fuzzy-ui-button__content_label {
+:where(.fuzzy-ui-button__content_label) {
   text-overflow: ellipsis;
   overflow: hidden;
 }
 
-.fuzzy-ui-button__loader {
+:where(.fuzzy-ui-button__loader) {
   position: absolute;
   top: 0;
   left: 0;
@@ -185,16 +185,16 @@ const handleClick = async (ev: MouseEvent) => {
   box-sizing: border-box;
 }
 
-.fuzzy-ui-button .fade-enter-active,
-.fuzzy-ui-button .fade-leave-active {
+:where(.fuzzy-ui-button .fade-enter-active),
+:where(.fuzzy-ui-button .fade-leave-active) {
   transition: opacity 0.25s;
 }
-.fuzzy-ui-button .fade-enter,
-.fuzzy-ui-button .fade-leave-to {
+:where(.fuzzy-ui-button .fade-enter),
+:where(.fuzzy-ui-button .fade-leave-to) {
   opacity: 0;
 }
 
-.fuzzy-ui-button {
+:where(.fuzzy-ui-button) {
   border-radius: var(--fuzzy-ui-button-border-radius);
   border-width: var(--fuzzy-ui-button-border-width);
   border-color: var(--fuzzy-ui-button-border-color);
@@ -206,39 +206,39 @@ const handleClick = async (ev: MouseEvent) => {
   line-height: 1;
 }
 
-.fuzzy-ui-button:focus-visible {
+:where(.fuzzy-ui-button:focus-visible) {
   outline-color: var(--fuzzy-ui-button-color);
 }
 
-.fuzzy-ui-button:hover {
+:where(.fuzzy-ui-button:hover) {
   background-color: var(--fuzzy-ui-button-hover-background-color);
 }
 
-.fuzzy-ui-button:hover .fuzzy-ui-button__content {
+:where(.fuzzy-ui-button:hover .fuzzy-ui-button__content) {
   color: var(--fuzzy-ui-button-hover-color);
 }
 
-.fuzzy-ui-button:active {
+:where(.fuzzy-ui-button:active) {
   background-color: var(--fuzzy-ui-button-active-background-color);
 }
 
-.fuzzy-ui-button:active .fuzzy-ui-button__content {
+:where(.fuzzy-ui-button:active .fuzzy-ui-button__content) {
   color: var(--fuzzy-ui-button-active-color);
 }
 
-.fuzzy-ui-button.disabled,
-.fuzzy-ui-button[disabled] {
+:where(.fuzzy-ui-button.disabled),
+:where(.fuzzy-ui-button[disabled]) {
   background-color: var(--fuzzy-ui-button-disabled-background-color);
   pointer-events: none;
 }
 
-.fuzzy-ui-button.disabled .fuzzy-ui-button__content,
-.fuzzy-ui-button[disabled] .fuzzy-ui-button__content {
+:where(.fuzzy-ui-button.disabled .fuzzy-ui-button__content),
+:where(.fuzzy-ui-button[disabled] .fuzzy-ui-button__content) {
   color: var(--fuzzy-ui-button-disabled-color);
   opacity: var(--fuzzy-ui-button-disabled-opacity);
 }
 
-.fuzzy-ui-button__loader {
+:where(.fuzzy-ui-button__loader) {
   color: var(--fuzzy-ui-button-loading-color);
   opacity: var(--fuzzy-ui-button-loading-opacity);
 }
