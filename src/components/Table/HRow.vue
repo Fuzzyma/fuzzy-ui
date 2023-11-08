@@ -1,6 +1,6 @@
 <template>
   <tr>
-    <th v-for="[key, col] in columns" :key="col.key + 'th'">
+    <th v-for="[key, col] in columns" :key="col.key + 'th'" v-bind="col.headerAttrs">
       <HCell :col="col" @sort="sort(key, col)" />
     </th>
   </tr>
